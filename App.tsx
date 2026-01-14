@@ -11,11 +11,13 @@ import { TestsView } from './components/views/TestsView.tsx';
 import { TeachingResourcesView } from './components/views/TeachingResourcesView.tsx';
 import { ClassDetailView } from './components/views/ClassDetailView.tsx';
 import { StudentDetailView } from './components/views/StudentDetailView.tsx';
+import { StudentDashboardView } from './components/views/StudentDashboardView.tsx';
 import { CoursesAdminView } from './components/views/CoursesAdminView.tsx';
 import { RolesPermissionsView } from './components/views/RolesPermissionsView.tsx';
 import { AccountCreationView } from './components/views/AccountCreationView.tsx';
 import { EditCertificatesView } from './components/views/EditCertificatesView.tsx';
 import { CenterDetailView } from './components/views/CenterDetailView.tsx';
+import { BranchRegistrationView } from './components/views/BranchRegistrationView.tsx';
 import { View, Teacher, UserRole } from './types.ts';
 import { MOCK_TEACHER, MOCK_CLASSES } from './constants.tsx';
 
@@ -51,13 +53,22 @@ const App: React.FC = () => {
   const renderView = () => {
     switch (currentView) {
       case View.MY_CLASSES:
-        return <MyClassesView teacher={teacher} classes={MOCK_CLASSES} activeRole={activeRole} onEnterClass={navigateToClass} onEnterCenter={navigateToCenter} />;
+        return <MyClassesView 
+          teacher={teacher} 
+          classes={MOCK_CLASSES} 
+          activeRole={activeRole} 
+          onEnterClass={navigateToClass} 
+          onEnterCenter={navigateToCenter}
+          onAddBranch={() => setCurrentView(View.REGISTER_BRANCH)}
+        />;
       case View.CENTER_DETAIL:
         return <CenterDetailView centerId={selectedCenterId!} onBack={() => setCurrentView(View.MY_CLASSES)} onManageCourse={navigateToCourseEdit} />;
       case View.CLASS_DETAIL:
         return <ClassDetailView classId={selectedClassId!} onStudentClick={navigateToStudent} onBack={() => setCurrentView(View.MY_CLASSES)} />;
       case View.STUDENT_DETAIL:
         return <StudentDetailView studentId={selectedStudentId!} onClassClick={navigateToClass} onBack={() => setCurrentView(View.MY_CLASSES)} />;
+      case View.STUDENT_DASHBOARD:
+        return <StudentDashboardView onEnterCourse={(id) => console.log('Entering course:', id)} />;
       case View.STUDENTS:
         return <StudentsView onStudentClick={navigateToStudent} />;
       case View.GRADES:
@@ -75,9 +86,11 @@ const App: React.FC = () => {
       case View.COURSES_ADMIN:
         return <CoursesAdminView initialCourseId={selectedCourseId} onExitEdit={() => setSelectedCourseId(null)} />;
       case View.ROLES_PERMISSIONS:
-        return <RolesPermissionsView />;
+        return <RolesPermissionsView onRegisterBranch={() => setCurrentView(View.REGISTER_BRANCH)} />;
       case View.ACCOUNT_CREATION:
         return <AccountCreationView />;
+      case View.REGISTER_BRANCH:
+        return <BranchRegistrationView onBack={() => setCurrentView(View.MY_CLASSES)} />;
       default:
         return <CoursesAdminView initialCourseId={selectedCourseId} onExitEdit={() => setSelectedCourseId(null)} />;
     }
@@ -93,6 +106,7 @@ const App: React.FC = () => {
           setActiveRole(role);
           if (role === UserRole.MAIN_CENTER) setCurrentView(View.COURSES_ADMIN);
           else if (role === UserRole.TEACHER) setCurrentView(View.MY_CLASSES);
+          else if (role === UserRole.STUDENT) setCurrentView(View.STUDENT_DASHBOARD);
         }}
       />
       <div className="flex flex-1 overflow-hidden">
@@ -101,7 +115,7 @@ const App: React.FC = () => {
           className="flex-1 relative flex flex-col overflow-hidden bg-fixed bg-center bg-no-repeat bg-cover"
           style={{ backgroundImage: "url('https://www.transparenttextures.com/patterns/cubes.png')" }}
         >
-          <div className="flex-1 overflow-hidden p-3 md:p-5 lg:p-6">
+          <div className="flex-1 overflow-hidden p-2 md:p-3">
             <div className="max-w-[1600px] mx-auto h-full flex flex-col animate-in fade-in zoom-in-95 duration-500">
               {renderView()}
             </div>

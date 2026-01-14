@@ -293,7 +293,7 @@ export const CenterDetailView: React.FC<CenterDetailViewProps> = ({ centerId, on
            <div className="flex items-center justify-between mb-6 md:mb-10 flex-shrink-0">
               <div className="flex items-center gap-3 md:gap-4">
                  <div className="p-3 md:p-4 bg-red-50 text-[#ec2027] rounded-2xl shadow-sm">
-                   <BookOpen size={24} md:size={30} strokeWidth={3} />
+                   <BookOpen size={24} strokeWidth={3} />
                  </div>
                  <div className="min-w-0">
                     <h3 className="text-lg md:text-2xl font-black text-[#292667] uppercase tracking-tighter leading-none truncate">Ordered Courses</h3>
@@ -304,7 +304,7 @@ export const CenterDetailView: React.FC<CenterDetailViewProps> = ({ centerId, on
                 onClick={() => setIsAddingCourse(true)}
                 className="px-5 py-3 md:px-8 md:py-4 bg-[#292667] text-[#fbee21] rounded-2xl font-black text-[10px] md:text-xs uppercase tracking-widest hover:bg-[#00a651] hover:text-white transition-all shadow-xl active:scale-95 flex items-center gap-2 md:gap-3 border-b-4 border-black/10 flex-shrink-0"
               >
-                 <PlusCircle size={16} md:size={18} /> <span className="hidden sm:inline">Add Courses</span>
+                 <PlusCircle size={16} /> <span className="hidden sm:inline">Add Courses</span>
               </button>
            </div>
 
@@ -317,7 +317,7 @@ export const CenterDetailView: React.FC<CenterDetailViewProps> = ({ centerId, on
                            <LayoutGrid size={28} strokeWidth={2.5} />
                          </div>
                          <div className="p-2 md:p-2.5 bg-white text-[#00a651] rounded-xl shadow-md group-hover:bg-[#00a651] group-hover:text-white transition-all">
-                           <CheckCircle2 size={18} md:size={20} strokeWidth={3} />
+                           <CheckCircle2 size={18} strokeWidth={3} />
                          </div>
                       </div>
                       
@@ -346,7 +346,7 @@ export const CenterDetailView: React.FC<CenterDetailViewProps> = ({ centerId, on
                  ))}
                  
                  <div className="bg-slate-50 p-6 md:p-8 rounded-[2rem] border-4 border-dashed border-slate-200 flex flex-col items-center justify-center text-center gap-4 md:gap-6 opacity-60 hover:opacity-100 transition-opacity h-full group cursor-pointer" onClick={() => setIsAddingCourse(true)}>
-                    <Trophy size={48} md:size={56} className="text-slate-200 group-hover:text-amber-400 transition-colors" />
+                    <Trophy size={48} className="text-slate-200 group-hover:text-amber-400 transition-colors" />
                     <div>
                        <h4 className="text-lg md:text-xl font-black text-slate-300 uppercase tracking-widest leading-none mb-2">Order More?</h4>
                        <p className="text-[10px] md:text-xs font-bold text-slate-300 uppercase max-w-[160px] mx-auto">Explore our premium library of AI and Robotics courses.</p>

@@ -12,7 +12,9 @@ import {
   ShieldCheck,
   UserPlus,
   Settings,
-  Building2
+  Building2,
+  Home,
+  BarChart3
 } from 'lucide-react';
 import { View, UserRole } from '../types.ts';
 
@@ -24,6 +26,7 @@ interface SidebarProps {
 
 export const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange, activeRole }) => {
   const isAdmin = activeRole === UserRole.MAIN_CENTER;
+  const isStudent = activeRole === UserRole.STUDENT;
 
   const adminItems = [
     { id: View.MY_CLASSES, label: 'Centers', icon: Building2, color: '#ec2027' },
@@ -43,7 +46,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange, act
     { id: View.RESOURCES, label: 'Teaching resources', icon: FileSearch, color: '#6366f1' },
   ];
 
-  const menuItems = isAdmin ? adminItems : teacherItems;
+  const studentItems = [
+    { id: View.STUDENT_DASHBOARD, label: 'My Home', icon: Home, color: '#00a651' },
+    { id: View.MY_CLASSES, label: 'My U Books', icon: BookOpen, color: '#ec2027' },
+    { id: View.GRADES, label: 'My Stats', icon: BarChart3, color: '#fbee21' },
+    { id: View.CERTIFICATES, label: 'My Awards', icon: Award, color: '#a855f7' },
+  ];
+
+  const menuItems = isStudent ? studentItems : (isAdmin ? adminItems : teacherItems);
 
   return (
     <div className="w-72 bg-[#292667] text-white flex flex-col hidden lg:flex h-full border-r-[12px] border-[#ec2027] shrink-0 overflow-hidden">
@@ -51,11 +61,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange, act
         {/* Compact Portal Header */}
         <div className="bg-white/5 p-4 rounded-[1.5rem] border-2 border-dashed border-white/20 relative group cursor-pointer overflow-hidden shrink-0 mb-6">
           <div className="flex items-center gap-4 relative z-10">
-            <div className={`w-11 h-11 rounded-[1rem] flex items-center justify-center rotate-6 shadow-xl transition-transform group-hover:scale-110 ${isAdmin ? 'bg-[#ec2027]' : 'bg-[#fbee21]'}`}>
-              {isAdmin ? <Settings className="text-white" size={26} strokeWidth={3} /> : <Sparkles className="text-[#292667]" size={26} strokeWidth={3} />}
+            <div className={`w-11 h-11 rounded-[1rem] flex items-center justify-center rotate-6 shadow-xl transition-transform group-hover:scale-110 ${isAdmin ? 'bg-[#ec2027]' : (isStudent ? 'bg-[#00a651]' : 'bg-[#fbee21]')}`}>
+              {isAdmin ? <Settings className="text-white" size={26} strokeWidth={3} /> : <Sparkles className={isStudent ? "text-white" : "text-[#292667]"} size={26} strokeWidth={3} />}
             </div>
             <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#fbee21]">{isAdmin ? 'Main Center' : 'Educator'}</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#fbee21]">{isAdmin ? 'Main Center' : (isStudent ? 'Learner Hub' : 'Educator')}</p>
               <h4 className="text-lg font-black leading-none">U Book Store</h4>
             </div>
           </div>
@@ -97,17 +107,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange, act
 
       {/* Profile Section */}
       <div className="p-6 shrink-0">
-        <div className={`rounded-[1.5rem] p-4 flex items-center gap-4 border-4 shadow-2xl transition-transform hover:scale-105 cursor-pointer ${isAdmin ? 'bg-[#ec2027] border-[#fbee21]' : 'bg-[#292667] border-[#fbee21]'}`}>
+        <div className={`rounded-[1.5rem] p-4 flex items-center gap-4 border-4 shadow-2xl transition-transform hover:scale-105 cursor-pointer ${isAdmin ? 'bg-[#ec2027] border-[#fbee21]' : (isStudent ? 'bg-[#00a651] border-[#fbee21]' : 'bg-[#292667] border-[#fbee21]')}`}>
           <div className="relative shrink-0">
             <img 
-              src={`https://picsum.photos/seed/${isAdmin ? 'admin-ub' : 'u-profile'}/64`} 
+              src={`https://picsum.photos/seed/${isAdmin ? 'admin-ub' : (isStudent ? 'timmy' : 'u-profile')}/64`} 
               className="w-12 h-12 rounded-xl border-4 border-white shadow-lg object-cover" 
               alt="Profile" 
             />
           </div>
           <div className="overflow-hidden">
-            <p className="font-black text-white text-sm leading-tight truncate uppercase">{isAdmin ? 'Super Admin' : 'Teacher Jane'}</p>
-            <p className={`${isAdmin ? 'text-white/80' : 'text-[#fbee21]'} text-[10px] font-black uppercase mt-1 tracking-widest`}>{isAdmin ? 'Master Hub' : 'Admin Access'}</p>
+            <p className="font-black text-white text-sm leading-tight truncate uppercase">{isAdmin ? 'Super Admin' : (isStudent ? 'Learner Timmy' : 'Teacher Jane')}</p>
+            <p className={`${isAdmin ? 'text-white/80' : 'text-[#fbee21]'} text-[10px] font-black uppercase mt-1 tracking-widest`}>{isAdmin ? 'Master Hub' : (isStudent ? 'Student Account' : 'Admin Access')}</p>
           </div>
         </div>
       </div>

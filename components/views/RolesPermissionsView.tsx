@@ -22,7 +22,11 @@ import {
   GraduationCap
 } from 'lucide-react';
 
-export const RolesPermissionsView: React.FC = () => {
+interface RolesPermissionsViewProps {
+  onRegisterBranch: () => void;
+}
+
+export const RolesPermissionsView: React.FC<RolesPermissionsViewProps> = ({ onRegisterBranch }) => {
   const [schools, setSchools] = useState<School[]>(MOCK_SCHOOLS);
   const [selectedSchoolId, setSelectedSchoolId] = useState<string>(MOCK_SCHOOLS[0].id);
   const [isEditingQuota, setIsEditingQuota] = useState(false);
@@ -127,7 +131,10 @@ export const RolesPermissionsView: React.FC = () => {
              </div>
            </div>
         </div>
-        <button className="flex items-center gap-4 px-10 py-5 bg-[#fbee21] text-[#292667] rounded-[2rem] font-black uppercase tracking-widest text-sm shadow-xl hover:scale-105 active:scale-95 transition-all relative z-10 border-b-6 border-black/10">
+        <button 
+          onClick={onRegisterBranch}
+          className="flex items-center gap-4 px-10 py-5 bg-[#fbee21] text-[#292667] rounded-[2rem] font-black uppercase tracking-widest text-sm shadow-xl hover:scale-105 active:scale-95 transition-all relative z-10 border-b-6 border-black/10"
+        >
            <Plus size={28} strokeWidth={4} /> Register Branch
         </button>
       </div>

@@ -101,6 +101,7 @@ export enum View {
   CENTER_DETAIL = 'center-detail',
   CLASS_DETAIL = 'class-detail',
   STUDENT_DETAIL = 'student-detail',
+  STUDENT_DASHBOARD = 'student-dashboard',
   STUDENTS = 'students',
   GRADES = 'grades',
   REPORTS = 'reports',
@@ -110,5 +111,6 @@ export enum View {
   COURSES_ADMIN = 'courses-admin',
   ROLES_PERMISSIONS = 'roles-permissions',
   EDIT_CERTIFICATES = 'edit-certificates',
-  ACCOUNT_CREATION = 'account-creation'
+  ACCOUNT_CREATION = 'account-creation',
+  REGISTER_BRANCH = 'register-branch'
 }

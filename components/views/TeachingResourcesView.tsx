@@ -1,20 +1,124 @@
 
 import React, { useState } from 'react';
-import { LANGUAGES } from '../../constants';
-import { FileText, PlayCircle, Download, ExternalLink, Filter, Search, FileSearch, Sparkles, BookOpen, Plus, FileUp } from 'lucide-react';
+import { FileText, PlayCircle, Download, ExternalLink, Filter, Search, FileSearch, Sparkles, BookOpen, Plus, FileUp, X, Save, Trash2 } from 'lucide-react';
+
+const UploadAssetModal = ({ onClose, onUpload }: { onClose: () => void, onUpload: (asset: any) => void }) => {
+  const [formData, setFormData] = useState({
+    title: '',
+    type: 'PDF',
+    book: 'Digital Kids V2',
+    lang: 'English'
+  });
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-[#292667]/80 backdrop-blur-md animate-in fade-in duration-300">
+      <div className="bg-white rounded-[2.5rem] p-8 md:p-10 max-w-xl w-full shadow-2xl border-t-[12px] border-[#6366f1] relative animate-in zoom-in-95 duration-300 max-h-[90vh] overflow-y-auto scrollbar-hide">
+        <button onClick={onClose} className="absolute top-6 right-6 p-2 text-slate-300 hover:text-[#ec2027] transition-all bg-slate-50 rounded-xl">
+          <X size={20} strokeWidth={3} />
+        </button>
+
+        <div className="flex items-center gap-4 mb-8">
+          <div className="p-4 bg-[#6366f1] text-white rounded-2xl shadow-xl">
+            <FileUp size={28} strokeWidth={3} />
+          </div>
+          <div>
+            <h3 className="text-2xl font-black text-[#292667] uppercase tracking-tighter leading-none">Upload Asset</h3>
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Resource Repository</p>
+          </div>
+        </div>
+
+        <div className="space-y-5">
+          <div className="space-y-1">
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Asset Title</label>
+            <input 
+              type="text" 
+              placeholder="e.g. Logic Gates Guide" 
+              className="w-full px-6 py-4 bg-slate-50 border-2 border-slate-100 rounded-2xl font-black text-[#292667] outline-none focus:border-[#6366f1] transition-all"
+              value={formData.title}
+              onChange={(e) => setFormData({...formData, title: e.target.value})}
+            />
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Resource Type</label>
+              <select 
+                className="w-full px-6 py-4 bg-slate-50 border-2 border-slate-100 rounded-2xl font-black text-[#292667] outline-none focus:border-[#6366f1] transition-all uppercase appearance-none"
+                value={formData.type}
+                onChange={(e) => setFormData({...formData, type: e.target.value})}
+              >
+                <option>PDF</option>
+                <option>Video</option>
+                <option>DOCX</option>
+                <option>Image</option>
+              </select>
+            </div>
+            <div className="space-y-1">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Book Series</label>
+              <select 
+                className="w-full px-6 py-4 bg-slate-50 border-2 border-slate-100 rounded-2xl font-black text-[#292667] outline-none focus:border-[#6366f1] transition-all uppercase appearance-none"
+                value={formData.book}
+                onChange={(e) => setFormData({...formData, book: e.target.value})}
+              >
+                <option>Digital Kids V1</option>
+                <option>Digital Kids V2</option>
+                <option>Digital Kids V3</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="p-6 bg-slate-50 border-4 border-dashed border-slate-200 rounded-3xl text-center group hover:border-[#6366f1] transition-all cursor-pointer">
+            <FileSearch size={32} className="mx-auto text-slate-300 group-hover:text-[#6366f1] mb-2 transition-colors" />
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover:text-[#292667]">Click or drag file to upload</p>
+          </div>
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-4 mt-10">
+          <button onClick={onClose} className="flex-1 py-4 px-6 bg-slate-100 text-slate-400 rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-slate-200 transition-all">Cancel</button>
+          <button 
+            onClick={() => {
+              if (!formData.title) return alert("Please enter a title");
+              onUpload({ ...formData, id: Date.now(), size: '1.2 MB' });
+            }}
+            className="flex-[2] py-4 px-6 bg-[#292667] text-[#fbee21] rounded-2xl font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-[#6366f1] hover:text-white shadow-lg transition-all border-b-4 border-black/10 active:scale-95"
+          >
+            <Save size={18} /> Confirm Upload
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export const TeachingResourcesView: React.FC = () => {
-  const [filter, setFilter] = useState({ book: 'all', lang: 'all', section: 'all' });
-
-  const resources = [
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [resources, setResources] = useState([
     { id: 1, title: 'Teacher Guide: Introduction to Logic', type: 'PDF', size: '2.4 MB', lang: 'English', book: 'Digital Kids V2' },
     { id: 2, title: 'Animated Module 1: Binary Concepts', type: 'Video', size: '45 MB', lang: 'English', book: 'Digital Kids V1' },
     { id: 3, title: 'Worksheet: Pattern Recognition', type: 'DOCX', size: '1.1 MB', lang: 'Spanish', book: 'Digital Kids V2' },
     { id: 4, title: 'Classroom Activity: Card Sorting', type: 'PDF', size: '3.8 MB', lang: 'Portuguese', book: 'Digital Kids V3' },
-  ];
+  ]);
+
+  const handleUpload = (newAsset: any) => {
+    setResources([newAsset, ...resources]);
+    setIsUploadModalOpen(false);
+  };
+
+  const handleDelete = (id: number) => {
+    if (confirm("Are you sure you want to delete this resource?")) {
+      setResources(resources.filter(r => r.id !== id));
+    }
+  };
 
   return (
     <div className="h-full flex flex-col gap-6 overflow-hidden animate-in fade-in duration-500">
+      {isUploadModalOpen && (
+        <UploadAssetModal 
+          onClose={() => setIsUploadModalOpen(false)} 
+          onUpload={handleUpload} 
+        />
+      )}
+
       <div className="w-full bg-[#292667] rounded-[3rem] p-8 text-white shadow-2xl border-b-[12px] border-[#6366f1] flex flex-col md:flex-row items-center justify-between gap-8 flex-shrink-0 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-80 h-80 bg-white/5 rounded-full -mr-24 -mt-24 blur-3xl"></div>
         <div className="flex items-center gap-6 relative z-10">
@@ -29,7 +133,10 @@ export const TeachingResourcesView: React.FC = () => {
              </div>
            </div>
         </div>
-        <button className="flex items-center gap-4 px-10 py-5 bg-[#fbee21] text-[#292667] rounded-[2rem] font-black text-sm uppercase tracking-widest shadow-xl hover:scale-105 active:scale-95 transition-all border-b-6 border-black/10 relative z-10">
+        <button 
+          onClick={() => setIsUploadModalOpen(true)}
+          className="flex items-center gap-4 px-10 py-5 bg-[#fbee21] text-[#292667] rounded-[2rem] font-black text-sm uppercase tracking-widest shadow-xl hover:scale-105 active:scale-95 transition-all border-b-6 border-black/10 relative z-10"
+        >
           <FileUp size={28} strokeWidth={3} />
           <span>Upload New Asset</span>
         </button>
@@ -61,7 +168,7 @@ export const TeachingResourcesView: React.FC = () => {
               <option>Assessments</option>
             </select>
           </div>
-          <button className="p-4 bg-[#6366f1] text-white rounded-[1.5rem] shadow-xl hover:bg-[#292667] transition-all active:scale-95 border-b-4 border-black/20">
+          <button className="p-4 bg-[#6366f1] text-white rounded-[1.5rem] shadow-xl hover:bg-[#292667] transition-all active:scale-95 border-b-4 border-black/10">
              <Filter size={24} strokeWidth={3} />
           </button>
         </div>
@@ -88,10 +195,16 @@ export const TeachingResourcesView: React.FC = () => {
               </div>
 
               <div className="flex flex-col gap-2">
-                <button className="p-3 bg-[#292667] text-white rounded-xl shadow-xl hover:bg-[#ec2027] transition-all active:scale-95 shadow-red-100">
+                <button className="p-3 bg-[#292667] text-white rounded-xl shadow-xl hover:bg-[#00a651] transition-all active:scale-95">
                   <Download size={20} strokeWidth={3} />
                 </button>
-                <button className="p-3 bg-slate-50 text-slate-400 rounded-xl hover:text-[#292667] transition-all">
+                <button 
+                  onClick={() => handleDelete(res.id)}
+                  className="p-3 bg-slate-50 text-slate-300 hover:bg-[#ec2027] hover:text-white rounded-xl transition-all active:scale-95"
+                >
+                  <Trash2 size={20} strokeWidth={3} />
+                </button>
+                <button className="p-3 bg-slate-50 text-slate-300 rounded-xl hover:text-[#292667] transition-all">
                   <ExternalLink size={20} strokeWidth={3} />
                 </button>
               </div>
