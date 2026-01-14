@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { MOCK_COURSES } from '../../constants.tsx';
-import { Award, Palette, Layout, Save, Star, Sparkles, Image as ImageIcon, BookOpen } from 'lucide-react';
+import { Award, Palette, Layout, Save, Star, Sparkles, RefreshCw, BookOpen, User, Hash, Calendar, Type, CheckCircle2 } from 'lucide-react';
 
 const BrandLogo = () => (
   <div className="flex flex-col items-center">
@@ -30,16 +30,40 @@ const BrandLogo = () => (
 );
 
 export const EditCertificatesView: React.FC = () => {
-  const [selectedCourseId, setSelectedCourseId] = useState(MOCK_COURSES[0].id);
-  const [config, setConfig] = useState({
+  const initialConfig = {
     primaryColor: '#292667',
     secondaryColor: '#fbee21',
     accentColor: '#ec2027',
     borderStyle: 'double',
-    fontFamily: 'Serif'
-  });
+    fontFamily: 'Serif',
+    studentName: 'TIMMY LEE',
+    courseName: MOCK_COURSES[0].name,
+    studentCode: 'UC-9421',
+    issueDate: new Date().toISOString().split('T')[0]
+  };
 
-  const activeCourse = MOCK_COURSES.find(c => c.id === selectedCourseId) || MOCK_COURSES[0];
+  const [selectedCourseId, setSelectedCourseId] = useState(MOCK_COURSES[0].id);
+  const [config, setConfig] = useState(initialConfig);
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleCourseChange = (id: string) => {
+    const course = MOCK_COURSES.find(c => c.id === id);
+    if (course) {
+      setSelectedCourseId(id);
+      setConfig(prev => ({ ...prev, courseName: course.name }));
+    }
+  };
+
+  const handleSave = () => {
+    setIsSaving(true);
+    setTimeout(() => setIsSaving(false), 2000);
+  };
+
+  const handleReset = () => {
+    if (confirm("Reset template to defaults?")) {
+      setConfig(initialConfig);
+    }
+  };
 
   return (
     <div className="h-full flex flex-col gap-6 overflow-hidden animate-in fade-in duration-500">
@@ -57,25 +81,81 @@ export const EditCertificatesView: React.FC = () => {
              </div>
            </div>
         </div>
+        <button 
+           onClick={handleReset}
+           className="px-8 py-3 bg-white/10 text-white border-2 border-white/20 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-[#ec2027] hover:border-transparent transition-all z-10"
+        >
+          Reset to Default
+        </button>
       </div>
 
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8 overflow-hidden pb-4">
+        {/* Sidebar Customizer */}
         <div className="lg:col-span-4 bg-white rounded-[3rem] p-8 border-2 border-slate-100 shadow-xl overflow-y-auto scrollbar-hide flex flex-col">
-           <h3 className="text-lg font-black text-[#292667] uppercase tracking-tight mb-8">Asset Customizer</h3>
+           <h3 className="text-xl font-black text-[#292667] uppercase tracking-tight mb-8">Asset Customizer</h3>
            
-           <div className="space-y-8 flex-1">
-              <div className="space-y-3">
+           <div className="space-y-6 flex-1 pr-2">
+              <div className="space-y-2">
                  <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2"><BookOpen size={14} /> Link to Program</label>
                  <select 
-                    className="w-full px-6 py-4 bg-slate-50 border-2 border-slate-100 rounded-2xl font-black text-[11px] uppercase outline-none"
+                    className="w-full px-5 py-4 bg-slate-50 border-2 border-slate-100 rounded-2xl font-black text-[11px] uppercase outline-none focus:border-[#a855f7] transition-all"
                     value={selectedCourseId}
-                    onChange={(e) => setSelectedCourseId(e.target.value)}
+                    onChange={(e) => handleCourseChange(e.target.value)}
                   >
                     {MOCK_COURSES.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                  </select>
               </div>
 
-              <div className="space-y-3">
+              <div className="space-y-2">
+                 <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2"><User size={14} /> Student Name</label>
+                 <div className="relative">
+                    <Type className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
+                    <input 
+                      type="text" 
+                      className="w-full pl-12 pr-5 py-4 bg-slate-50 border-2 border-slate-100 rounded-2xl font-black text-sm uppercase outline-none focus:border-[#a855f7] transition-all"
+                      value={config.studentName}
+                      onChange={(e) => setConfig({...config, studentName: e.target.value})}
+                      placeholder="ENTER NAME"
+                    />
+                 </div>
+              </div>
+
+              <div className="space-y-2">
+                 <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2"><Star size={14} /> Course Title Override</label>
+                 <div className="relative">
+                    <BookOpen className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
+                    <input 
+                      type="text" 
+                      className="w-full pl-12 pr-5 py-4 bg-slate-50 border-2 border-slate-100 rounded-2xl font-black text-sm uppercase outline-none focus:border-[#a855f7] transition-all"
+                      value={config.courseName}
+                      onChange={(e) => setConfig({...config, courseName: e.target.value})}
+                      placeholder="COURSE NAME"
+                    />
+                 </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                   <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2"><Hash size={14} /> Student Code</label>
+                   <input 
+                      type="text" 
+                      className="w-full px-5 py-4 bg-slate-50 border-2 border-slate-100 rounded-2xl font-black text-sm uppercase outline-none focus:border-[#a855f7] transition-all"
+                      value={config.studentCode}
+                      onChange={(e) => setConfig({...config, studentCode: e.target.value})}
+                    />
+                </div>
+                <div className="space-y-2">
+                   <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2"><Calendar size={14} /> Issue Date</label>
+                   <input 
+                      type="date" 
+                      className="w-full px-5 py-4 bg-slate-50 border-2 border-slate-100 rounded-2xl font-black text-[10px] uppercase outline-none focus:border-[#a855f7] transition-all"
+                      value={config.issueDate}
+                      onChange={(e) => setConfig({...config, issueDate: e.target.value})}
+                    />
+                </div>
+              </div>
+
+              <div className="space-y-3 pt-2">
                  <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2"><Palette size={14} /> Palette Control</label>
                  <div className="grid grid-cols-3 gap-3">
                     {[
@@ -88,63 +168,89 @@ export const EditCertificatesView: React.FC = () => {
                           type="color" 
                           value={item.v}
                           onChange={(e) => setConfig({...config, [item.k]: e.target.value})}
-                          className="w-full h-12 rounded-xl cursor-pointer border-2 border-slate-100" 
+                          className="w-full h-12 rounded-xl cursor-pointer border-2 border-slate-100 shadow-inner" 
                         />
-                        <span className="text-[9px] font-black uppercase text-center text-slate-400">{item.l}</span>
+                        <span className="text-[8px] font-black uppercase text-center text-slate-400">{item.l}</span>
                       </div>
                     ))}
                  </div>
               </div>
 
-              <div className="space-y-3">
+              <div className="space-y-2">
                  <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2"><Layout size={14} /> Border Finish</label>
                  <select 
-                    className="w-full px-6 py-4 bg-slate-50 border-2 border-slate-100 rounded-2xl font-black text-sm uppercase outline-none"
+                    className="w-full px-5 py-4 bg-slate-50 border-2 border-slate-100 rounded-2xl font-black text-xs uppercase outline-none focus:border-[#a855f7] transition-all"
                     value={config.borderStyle}
                     onChange={(e) => setConfig({...config, borderStyle: e.target.value})}
                   >
-                    <option>solid</option>
-                    <option>double</option>
-                    <option>dashed</option>
-                    <option>none</option>
+                    <option value="solid">SOLID FRAME</option>
+                    <option value="double">DOUBLE FRAME</option>
+                    <option value="dashed">DASHED FRAME</option>
+                    <option value="none">NO FRAME</option>
                  </select>
               </div>
            </div>
 
-           <button className="w-full py-6 mt-8 bg-[#292667] text-white rounded-[2rem] font-black text-lg uppercase tracking-[0.2em] shadow-2xl flex items-center justify-center gap-4 hover:bg-[#a855f7] transition-all border-b-8 border-black/10">
-              <Save size={24} strokeWidth={3} /> Save Template
+           <button 
+              onClick={handleSave}
+              disabled={isSaving}
+              className={`w-full py-6 mt-8 rounded-[2rem] font-black text-lg uppercase tracking-[0.2em] shadow-2xl flex items-center justify-center gap-4 transition-all border-b-8 border-black/10 active:scale-95 ${
+                isSaving ? 'bg-[#00a651] text-white' : 'bg-[#292667] text-white hover:bg-[#a855f7]'
+              }`}
+           >
+              {isSaving ? <CheckCircle2 size={24} /> : <Save size={24} strokeWidth={3} />}
+              {isSaving ? 'Branding Saved' : 'Save Template'}
            </button>
         </div>
 
+        {/* Preview Panel */}
         <div className="lg:col-span-8 flex flex-col gap-6 overflow-hidden">
-           <div className="bg-slate-200/50 p-12 rounded-[4rem] flex-1 flex items-center justify-center">
+           <div className="bg-slate-200/50 p-8 md:p-12 rounded-[4rem] flex-1 flex items-center justify-center overflow-hidden">
               <div 
-                className="w-full max-w-2xl aspect-[1.4/1] bg-white p-12 text-center relative shadow-2xl flex flex-col items-center justify-center overflow-hidden"
+                className="w-full max-w-2xl aspect-[1.4/1] bg-white p-12 text-center relative shadow-2xl flex flex-col items-center justify-center overflow-hidden animate-in zoom-in-95"
                 style={{ 
                   border: `12px ${config.borderStyle} ${config.secondaryColor}`,
-                  borderRadius: '2rem'
+                  borderRadius: '2.5rem'
                 }}
               >
-                <div className="mb-6">
+                <div className="mb-6 flex flex-col items-center">
                   <div className="p-4 bg-white rounded-3xl border-2 border-slate-50 shadow-xl mb-4 transform scale-125 inline-block" style={{ boxShadow: `0 20px 25px -5px ${config.primaryColor}20` }}>
                     <BrandLogo />
                   </div>
-                  <h1 className="text-3xl font-serif text-slate-800 mb-2 tracking-tight">Certification of Achievement</h1>
+                  <h1 className="text-2xl font-serif text-slate-800 mb-2 tracking-tight">Certification of Achievement</h1>
+                  <p className="text-slate-400 font-bold italic text-sm">This is proudly presented to</p>
                 </div>
 
-                <div className="mb-8">
-                  <h2 className="text-5xl font-black mb-4 uppercase tracking-tight" style={{ color: config.primaryColor }}>Timmy Lee</h2>
+                <div className="mb-8 w-full">
+                  <h2 className="text-5xl font-black mb-4 uppercase tracking-tight leading-none truncate px-4" style={{ color: config.primaryColor }}>
+                    {config.studentName || 'LEARNER NAME'}
+                  </h2>
                   <div className="h-1 w-64 mx-auto mb-4 rounded-full" style={{ backgroundColor: config.secondaryColor }}></div>
-                  <p className="text-lg text-slate-400 italic">For successfully completing the</p>
-                  <p className="text-2xl font-black uppercase mt-2" style={{ color: config.accentColor }}>{activeCourse.name}</p>
+                  <p className="text-base text-slate-400 italic">For successfully completing the program</p>
+                  <p className="text-2xl font-black uppercase mt-2 tracking-tight" style={{ color: config.accentColor }}>
+                    {config.courseName || 'COURSE NAME'}
+                  </p>
                 </div>
 
-                <div className="grid grid-cols-2 gap-12 w-full max-w-lg mt-4 opacity-40">
-                  <div className="border-t-2 border-slate-200 pt-2 font-black uppercase text-[10px] tracking-widest">Main Center HQ</div>
-                  <div className="border-t-2 border-slate-200 pt-2 font-black uppercase text-[10px] tracking-widest">Global Accreditation</div>
+                <div className="grid grid-cols-2 gap-12 w-full max-w-lg mt-4">
+                  <div className="space-y-1">
+                    <div className="border-t-2 border-slate-100 pt-2 font-black uppercase text-[9px] tracking-[0.2em] text-slate-400">Main Center HQ</div>
+                    <div className="h-1 w-12 bg-slate-100 mx-auto rounded-full mt-1"></div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="border-t-2 border-slate-100 pt-2 font-black uppercase text-[9px] tracking-[0.2em] text-slate-400">Date: {config.issueDate}</div>
+                    <div className="font-mono text-[8px] text-slate-300 mt-1 uppercase">CODE: {config.studentCode}</div>
+                  </div>
                 </div>
 
                 <div className="absolute -bottom-10 -right-10 w-48 h-48 opacity-[0.05]" style={{ color: config.accentColor }}><Sparkles size={200} /></div>
+              </div>
+           </div>
+           
+           <div className="flex items-center justify-center gap-6">
+              <div className="flex items-center gap-3 bg-white px-6 py-4 rounded-full shadow-lg border-2 border-slate-100">
+                 <div className="w-3 h-3 rounded-full animate-pulse bg-emerald-500"></div>
+                 <span className="text-[10px] font-black uppercase tracking-widest text-[#292667]">Live Preview Active</span>
               </div>
            </div>
         </div>

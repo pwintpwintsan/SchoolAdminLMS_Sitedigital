@@ -1,13 +1,36 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { MOCK_CLASSES, MOCK_COURSES } from '../../constants';
 import { Student, Teacher, UserRole } from '../../types';
-import { ChevronLeft, ChevronRight, GraduationCap, Users as UsersIcon, Trash2, UserPlus, UserCheck, ShieldCheck, Mail, Lock, AlertCircle, Info, Layers, X, Save, Sparkles } from 'lucide-react';
+import { 
+  ChevronLeft, 
+  ChevronRight, 
+  GraduationCap, 
+  Users as UsersIcon, 
+  Trash2, 
+  UserPlus, 
+  UserCheck, 
+  ShieldCheck, 
+  Mail, 
+  Lock, 
+  AlertCircle, 
+  Info, 
+  Layers, 
+  X, 
+  Save, 
+  Sparkles,
+  Eye,
+  FileCheck,
+  Search,
+  BookMarked,
+  CheckCircle2
+} from 'lucide-react';
 
 interface ClassDetailViewProps {
   classId: string;
   onStudentClick: (id: string) => void;
   onBack: () => void;
+  onEnterCourse: (id: string) => void;
 }
 
 const UpgradePopup = ({ onClose }: { onClose: () => void }) => (
@@ -43,7 +66,7 @@ const AddMemberModal = ({ type, onClose, onSave }: { type: 'student' | 'teacher'
 
   return (
     <div className="fixed inset-0 z-[110] flex items-center justify-center p-6 bg-[#292667]/70 backdrop-blur-md animate-in fade-in duration-300">
-      <div className="bg-white rounded-[2.5rem] p-8 max-w-md w-full shadow-2xl border-t-[12px] border-[#fbee21] relative animate-in slide-in-from-bottom-8 duration-300">
+      <div className="bg-white rounded-[2.5rem] p-8 max-md w-full shadow-2xl border-t-[12px] border-[#fbee21] relative animate-in slide-in-from-bottom-8 duration-300">
         <button onClick={onClose} className="absolute top-6 right-6 p-2 text-slate-400 hover:text-[#ec2027] transition-colors bg-slate-50 rounded-xl">
           <X size={20} strokeWidth={3} />
         </button>
@@ -140,16 +163,34 @@ const AddMemberModal = ({ type, onClose, onSave }: { type: 'student' | 'teacher'
   );
 };
 
-export const ClassDetailView: React.FC<ClassDetailViewProps> = ({ classId, onStudentClick, onBack }) => {
+export const ClassDetailView: React.FC<ClassDetailViewProps> = ({ classId, onStudentClick, onBack, onEnterCourse }) => {
   const cls = MOCK_CLASSES.find(c => c.id === classId) || MOCK_CLASSES[0];
   const [showUpgrade, setShowUpgrade] = useState(false);
   const [activeModal, setActiveModal] = useState<'student' | 'teacher' | null>(null);
   const [activeTab, setActiveTab] = useState<'students' | 'teachers'>('students');
+  const [isBrowseDropdownOpen, setIsBrowseDropdownOpen] = useState(false);
+  const [courseSearch, setCourseSearch] = useState('');
+  
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsBrowseDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleAddMember = (data: any) => {
     console.log(`Adding ${activeModal}:`, data);
     setActiveModal(null);
   };
+
+  const registeredCourses = MOCK_COURSES.filter(c => 
+    c.isPurchased && (courseSearch === '' || c.name.toLowerCase().includes(courseSearch.toLowerCase()))
+  );
 
   return (
     <div className="h-full flex flex-col gap-6 overflow-hidden relative">
@@ -199,29 +240,38 @@ export const ClassDetailView: React.FC<ClassDetailViewProps> = ({ classId, onStu
       {/* Split Page View */}
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 overflow-hidden pb-4">
         
-        {/* Left Column: Course Materials & Info */}
+        {/* Left Column: Course Names & Info */}
         <div className="lg:col-span-4 flex flex-col gap-6 overflow-hidden">
-          <div className="bg-white rounded-[3rem] p-8 border-2 border-slate-100 shadow-xl flex flex-col overflow-hidden">
-            <div className="flex items-center gap-4 mb-8 flex-shrink-0">
-              <div className="p-3 bg-red-50 rounded-2xl text-[#ec2027]">
-                <Layers size={32} strokeWidth={3} />
+          <div className="bg-white rounded-[3rem] p-8 border-2 border-slate-100 shadow-xl flex flex-col overflow-hidden relative">
+            <div className="flex items-center justify-between mb-8 flex-shrink-0">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-red-50 rounded-2xl text-[#ec2027]">
+                  <Layers size={32} strokeWidth={3} />
+                </div>
+                <h3 className="text-xl font-black uppercase tracking-tight text-[#292667]">Course Names</h3>
               </div>
-              <h3 className="text-xl font-black uppercase tracking-tight text-[#292667]">Learning Assets</h3>
+              <div className="p-2 bg-[#fbee21]/20 rounded-xl">
+                 <Sparkles size={20} className="text-[#292667]" />
+              </div>
             </div>
+
             <div className="flex-1 overflow-y-auto scrollbar-hide space-y-4 pr-2">
-              {MOCK_COURSES.map(course => (
+              {MOCK_COURSES.slice(0, 3).map(course => (
                 <div 
                   key={course.id}
+                  onClick={() => course.isPurchased && onEnterCourse(course.id)}
                   className={`relative rounded-[2rem] p-6 border-2 transition-all flex items-center justify-between overflow-hidden cursor-pointer ${
                     course.isPurchased 
                       ? 'bg-white border-slate-100 shadow-sm group hover:border-[#00a651] hover:shadow-xl' 
-                      : 'bg-slate-50 border-slate-100 grayscale opacity-40'
+                      : 'bg-slate-50 border-slate-100 grayscale opacity-40 cursor-not-allowed'
                   }`}
                 >
                   <div className="relative z-10 min-w-0">
-                    <h4 className="font-black text-[#292667] text-lg truncate uppercase">{course.name}</h4>
+                    <h4 className={`font-black text-[#292667] text-lg truncate uppercase ${course.isPurchased ? 'group-hover:text-[#00a651]' : ''}`}>
+                      {course.name}
+                    </h4>
                     <span className={`text-[10px] font-black uppercase px-3 py-1 rounded-full inline-block mt-2 ${course.isPurchased ? 'bg-[#00a651]/10 text-[#00a651]' : 'bg-slate-200 text-slate-400'}`}>
-                      {course.isPurchased ? 'Unlocked' : 'Locked Asset'}
+                      {course.isPurchased ? 'Active Registration' : 'Locked Asset'}
                     </span>
                   </div>
                   {course.isPurchased && (
@@ -233,9 +283,69 @@ export const ClassDetailView: React.FC<ClassDetailViewProps> = ({ classId, onStu
               ))}
             </div>
             
-            <button className="w-full py-5 px-8 mt-6 bg-[#292667] text-[#fbee21] rounded-[2rem] font-black text-sm uppercase tracking-[0.2em] shadow-xl hover:bg-[#ec2027] hover:text-white transition-all border-b-6 border-black/10">
-              Browse More Courses
-            </button>
+            {/* DROPDOWN CONTAINER FOR BROWSE MORE COURSES */}
+            <div className="relative mt-6" ref={dropdownRef}>
+              <button 
+                onClick={() => setIsBrowseDropdownOpen(!isBrowseDropdownOpen)}
+                className={`w-full py-5 px-8 rounded-[2rem] font-black text-sm uppercase tracking-[0.2em] shadow-xl transition-all border-b-6 border-black/10 flex items-center justify-center gap-3 ${
+                  isBrowseDropdownOpen ? 'bg-[#ec2027] text-white border-red-900 shadow-red-100' : 'bg-[#292667] text-[#fbee21] hover:bg-[#ec2027] hover:text-white'
+                }`}
+              >
+                {isBrowseDropdownOpen ? <X size={20} /> : <BookMarked size={20} />}
+                {isBrowseDropdownOpen ? 'Close Library' : 'Browse More Courses'}
+              </button>
+
+              {isBrowseDropdownOpen && (
+                <div className="absolute bottom-full left-0 right-0 mb-4 bg-white rounded-[2.5rem] shadow-[0_20px_60px_rgba(0,0,0,0.4)] border-4 border-[#292667] overflow-hidden z-[120] animate-in slide-in-from-bottom-10 fade-in duration-300">
+                  <div className="p-6 bg-[#292667] text-white flex items-center justify-between">
+                     <div className="flex items-center gap-3">
+                        <BookMarked size={20} className="text-[#fbee21]" />
+                        <h4 className="font-black text-sm uppercase tracking-widest">Your Registered U Books</h4>
+                     </div>
+                     <span className="text-[10px] font-black text-[#fbee21] px-2 py-1 bg-white/10 rounded-lg">{registeredCourses.length} TOTAL</span>
+                  </div>
+                  <div className="p-4 bg-slate-50 border-b-2 border-slate-100">
+                    <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-xl border-2 border-slate-200 focus-within:border-[#00a651] transition-all">
+                      <Search size={16} className="text-slate-400" />
+                      <input 
+                        type="text" 
+                        placeholder="Quick filter books..." 
+                        value={courseSearch}
+                        onChange={(e) => setCourseSearch(e.target.value)}
+                        className="bg-transparent text-xs font-bold text-[#292667] outline-none w-full"
+                      />
+                    </div>
+                  </div>
+                  <div className="max-h-[350px] overflow-y-auto scrollbar-hide p-3 space-y-2">
+                    {registeredCourses.length > 0 ? (
+                      registeredCourses.map(course => (
+                        <button 
+                          key={course.id}
+                          onClick={() => {
+                            onEnterCourse(course.id);
+                            setIsBrowseDropdownOpen(false);
+                          }}
+                          className="w-full text-left p-4 rounded-2xl hover:bg-slate-50 transition-all flex items-center justify-between group border-2 border-transparent hover:border-[#00a651]"
+                        >
+                          <div className="min-w-0">
+                            <p className="font-black text-[#292667] text-xs uppercase tracking-tight truncate group-hover:text-[#00a651]">{course.name}</p>
+                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">Difficulty: {course.level || 'Intermediate'}</p>
+                          </div>
+                          <div className="p-2 bg-green-50 text-[#00a651] rounded-lg opacity-0 group-hover:opacity-100 transition-all scale-75 group-hover:scale-100">
+                            <CheckCircle2 size={16} strokeWidth={3} />
+                          </div>
+                        </button>
+                      ))
+                    ) : (
+                      <div className="p-12 text-center">
+                         <Search size={32} className="mx-auto text-slate-200 mb-3" />
+                         <p className="text-slate-400 font-black text-[10px] uppercase tracking-widest">No books found in your library</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
@@ -246,7 +356,7 @@ export const ClassDetailView: React.FC<ClassDetailViewProps> = ({ classId, onStu
                onClick={() => setActiveTab('students')}
                className={`flex-1 flex flex-col items-center justify-center py-6 font-black text-sm uppercase transition-all border-b-8 gap-1 ${activeTab === 'students' ? 'border-[#ec2027] text-[#292667] bg-red-50/20' : 'border-transparent text-slate-400 hover:text-slate-600'}`}
              >
-               <GraduationCap size={28} strokeWidth={3} /> 
+               < GraduationCap size={28} strokeWidth={3} /> 
                <span>Learner Roster</span>
              </button>
              <button 
@@ -278,6 +388,12 @@ export const ClassDetailView: React.FC<ClassDetailViewProps> = ({ classId, onStu
                 <tr>
                   <th className="px-10 py-5">IDENTIFIER</th>
                   <th className="px-10 py-5">FULL NAME</th>
+                  {activeTab === 'students' && (
+                    <>
+                      <th className="px-10 py-5">PROGRESS</th>
+                      <th className="px-10 py-5">RESULTS</th>
+                    </>
+                  )}
                   <th className="px-10 py-5 text-right">CONTROLS</th>
                 </tr>
               </thead>
@@ -294,6 +410,30 @@ export const ClassDetailView: React.FC<ClassDetailViewProps> = ({ classId, onStu
                           <span className="font-black text-[#292667] text-lg uppercase tracking-tight">{s.firstName} {s.lastName}</span>
                         </div>
                       </td>
+                      {activeTab === 'students' && (
+                        <>
+                          <td className="px-10 py-6">
+                            <div className="flex items-center gap-3 min-w-[120px]">
+                              <div className="flex-1 h-2.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
+                                <div 
+                                  className={`h-full transition-all duration-1000 ${s.taskCompletion >= 90 ? 'bg-[#00a651]' : 'bg-[#3b82f6]'}`} 
+                                  style={{ width: `${s.taskCompletion}%` }}
+                                ></div>
+                              </div>
+                              <span className="text-[10px] font-black text-[#292667]">{s.taskCompletion}%</span>
+                            </div>
+                          </td>
+                          <td className="px-10 py-6">
+                            <button 
+                              onClick={() => onStudentClick(s.id)}
+                              className="p-2.5 bg-slate-100 text-slate-400 hover:bg-[#292667] hover:text-white rounded-xl transition-all shadow-sm group/btn"
+                              title="View detailed results"
+                            >
+                              <Eye size={18} strokeWidth={3} className="group-hover/btn:scale-110 transition-transform" />
+                            </button>
+                          </td>
+                        </>
+                      )}
                       <td className="px-10 py-6 text-right">
                         <button className="p-3 bg-white text-slate-300 hover:text-red-500 rounded-2xl border-2 border-slate-100 transition-all hover:scale-110"><Trash2 size={20} /></button>
                       </td>

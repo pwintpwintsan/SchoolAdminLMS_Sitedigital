@@ -57,7 +57,6 @@ export const Header: React.FC<HeaderProps> = ({ schoolName, teacherCode, activeR
   const roles = [
     { id: UserRole.MAIN_CENTER, label: 'Admin', icon: ShieldAlert, color: 'text-[#ec2027]', bg: 'bg-[#ec2027]/10' },
     { id: UserRole.TEACHER, label: 'Teacher', icon: GraduationCap, color: 'text-[#292667]', bg: 'bg-[#fbee21]/20' },
-    { id: UserRole.STUDENT, label: 'Student', icon: User, color: 'text-[#00a651]', bg: 'bg-[#00a651]/10' },
   ];
 
   return (
@@ -111,8 +110,10 @@ export const Header: React.FC<HeaderProps> = ({ schoolName, teacherCode, activeR
            {/* Mobile Role Switcher (Simple Toggle) */}
            <button 
               onClick={() => {
-                const rolesArr = [UserRole.MAIN_CENTER, UserRole.TEACHER, UserRole.STUDENT];
-                const nextIdx = (rolesArr.indexOf(activeRole) + 1) % rolesArr.length;
+                const rolesArr = [UserRole.MAIN_CENTER, UserRole.TEACHER];
+                const currentIndex = rolesArr.indexOf(activeRole);
+                // If current role isn't in switcher (e.g. Student), default to Admin
+                const nextIdx = currentIndex === -1 ? 0 : (currentIndex + 1) % rolesArr.length;
                 onRoleChange(rolesArr[nextIdx]);
               }}
               className="p-2.5 bg-slate-50 rounded-xl text-[#292667] border border-slate-200"

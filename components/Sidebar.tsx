@@ -22,43 +22,45 @@ interface SidebarProps {
   currentView: View;
   onViewChange: (view: View) => void;
   activeRole: UserRole;
+  checkPermission: (category: any, action: string) => boolean;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange, activeRole }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange, activeRole, checkPermission }) => {
   const isAdmin = activeRole === UserRole.MAIN_CENTER;
   const isStudent = activeRole === UserRole.STUDENT;
 
+  // Filter items based on "view" permission
   const adminItems = [
-    { id: View.MY_CLASSES, label: 'Centers', icon: Building2, color: '#ec2027' },
-    { id: View.COURSES_ADMIN, label: 'Courses Content', icon: BookOpen, color: '#00a651' },
-    { id: View.ROLES_PERMISSIONS, label: 'Roles & Permissions', icon: ShieldCheck, color: '#3b82f6' },
-    { id: View.RESOURCES, label: 'Resources', icon: FileSearch, color: '#6366f1' },
-    { id: View.EDIT_CERTIFICATES, label: 'Edit Certificates', icon: Award, color: '#a855f7' },
-    { id: View.ACCOUNT_CREATION, label: 'Create Account', icon: UserPlus, color: '#f43f5e' },
-  ];
+    { id: View.MY_CLASSES, label: 'Centers', icon: Building2, color: '#ec2027', category: 'accounts' },
+    { id: View.COURSES_ADMIN, label: 'Courses Content', icon: BookOpen, color: '#00a651', category: 'courses' },
+    { id: View.ROLES_PERMISSIONS, label: 'Roles & Permissions', icon: ShieldCheck, color: '#3b82f6', category: 'accounts' },
+    { id: View.RESOURCES, label: 'Resources', icon: FileSearch, color: '#6366f1', category: 'resources' },
+    { id: View.EDIT_CERTIFICATES, label: 'Edit Certificates', icon: Award, color: '#a855f7', category: 'certificates' },
+    { id: View.ACCOUNT_CREATION, label: 'Create Account', icon: UserPlus, color: '#f43f5e', category: 'accounts' },
+  ].filter(item => checkPermission(item.category, 'view'));
 
   const teacherItems = [
-    { id: View.MY_CLASSES, label: 'My classes', icon: LayoutDashboard, color: '#ec2027' },
-    { id: View.STUDENTS, label: 'Students', icon: Users, color: '#00a651' },
-    { id: View.GRADES, label: 'Grades', icon: GraduationCap, color: '#fbee21' },
-    { id: View.CERTIFICATES, label: 'Certificates', icon: Award, color: '#a855f7' },
-    { id: View.TESTS, label: 'Tests', icon: ClipboardCheck, color: '#f43f5e' },
-    { id: View.RESOURCES, label: 'Teaching resources', icon: FileSearch, color: '#6366f1' },
-  ];
+    { id: View.MY_CLASSES, label: 'My classes', icon: LayoutDashboard, color: '#ec2027', category: 'accounts' },
+    { id: View.COURSES_ADMIN, label: 'Manage Courses', icon: BookOpen, color: '#00a651', category: 'courses' }, // Added to teacher sidebar
+    { id: View.STUDENTS, label: 'Students', icon: Users, color: '#00a651', category: 'accounts' },
+    { id: View.GRADES, label: 'Grades', icon: GraduationCap, color: '#fbee21', category: 'accounts' },
+    { id: View.CERTIFICATES, label: 'Certificates', icon: Award, color: '#a855f7', category: 'certificates' },
+    { id: View.TESTS, label: 'Tests', icon: ClipboardCheck, color: '#f43f5e', category: 'courses' },
+    { id: View.RESOURCES, label: 'Teaching resources', icon: FileSearch, color: '#6366f1', category: 'resources' },
+  ].filter(item => checkPermission(item.category, 'view'));
 
   const studentItems = [
-    { id: View.STUDENT_DASHBOARD, label: 'My Home', icon: Home, color: '#00a651' },
-    { id: View.MY_CLASSES, label: 'My U Books', icon: BookOpen, color: '#ec2027' },
-    { id: View.GRADES, label: 'My Stats', icon: BarChart3, color: '#fbee21' },
-    { id: View.CERTIFICATES, label: 'My Awards', icon: Award, color: '#a855f7' },
-  ];
+    { id: View.STUDENT_DASHBOARD, label: 'My Home', icon: Home, color: '#00a651', category: 'courses' },
+    { id: View.MY_CLASSES, label: 'My U Books', icon: BookOpen, color: '#ec2027', category: 'courses' },
+    { id: View.GRADES, label: 'My Stats', icon: BarChart3, color: '#fbee21', category: 'accounts' },
+    { id: View.CERTIFICATES, label: 'My Awards', icon: Award, color: '#a855f7', category: 'certificates' },
+  ].filter(item => checkPermission(item.category ?? 'courses', 'view'));
 
   const menuItems = isStudent ? studentItems : (isAdmin ? adminItems : teacherItems);
 
   return (
     <div className="w-72 bg-[#292667] text-white flex flex-col hidden lg:flex h-full border-r-[12px] border-[#ec2027] shrink-0 overflow-hidden">
       <div className="p-6 flex-1 overflow-hidden flex flex-col justify-start">
-        {/* Compact Portal Header */}
         <div className="bg-white/5 p-4 rounded-[1.5rem] border-2 border-dashed border-white/20 relative group cursor-pointer overflow-hidden shrink-0 mb-6">
           <div className="flex items-center gap-4 relative z-10">
             <div className={`w-11 h-11 rounded-[1rem] flex items-center justify-center rotate-6 shadow-xl transition-transform group-hover:scale-110 ${isAdmin ? 'bg-[#ec2027]' : (isStudent ? 'bg-[#00a651]' : 'bg-[#fbee21]')}`}>
@@ -71,7 +73,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange, act
           </div>
         </div>
 
-        {/* Navigation Items */}
         <nav className="space-y-2 flex-1 overflow-y-auto scrollbar-hide py-1">
           {menuItems.map((item) => {
             const Icon = item.icon;
@@ -105,7 +106,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange, act
         </nav>
       </div>
 
-      {/* Profile Section */}
       <div className="p-6 shrink-0">
         <div className={`rounded-[1.5rem] p-4 flex items-center gap-4 border-4 shadow-2xl transition-transform hover:scale-105 cursor-pointer ${isAdmin ? 'bg-[#ec2027] border-[#fbee21]' : (isStudent ? 'bg-[#00a651] border-[#fbee21]' : 'bg-[#292667] border-[#fbee21]')}`}>
           <div className="relative shrink-0">

@@ -6,12 +6,16 @@ import { Search, Filter, Edit, MoreVertical, Trash2, LayoutGrid, Users, Sparkles
 
 interface StudentsViewProps {
   onStudentClick: (id: string) => void;
+  checkPermission?: (category: any, action: string) => boolean;
 }
 
-export const StudentsView: React.FC<StudentsViewProps> = ({ onStudentClick }) => {
+export const StudentsView: React.FC<StudentsViewProps> = ({ onStudentClick, checkPermission }) => {
   const [students] = useState<Student[]>(MOCK_STUDENTS);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedClass, setSelectedClass] = useState('all');
+
+  const canEdit = checkPermission?.('accounts', 'edit') ?? true;
+  const canDelete = checkPermission?.('accounts', 'delete') ?? true;
 
   const filteredStudents = students.filter(s => {
     const matchesSearch = `${s.firstName} ${s.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -21,7 +25,7 @@ export const StudentsView: React.FC<StudentsViewProps> = ({ onStudentClick }) =>
 
   return (
     <div className="h-full flex flex-col gap-6 overflow-hidden">
-      {/* Consistent Full-Width Header Bar */}
+      {/* Header Bar... */}
       <div className="w-full bg-[#292667] rounded-[3rem] p-8 text-white shadow-2xl border-b-[12px] border-[#00a651] flex flex-col md:flex-row items-center justify-between gap-8 flex-shrink-0 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-80 h-80 bg-white/5 rounded-full -mr-24 -mt-24 blur-3xl"></div>
         
@@ -51,7 +55,7 @@ export const StudentsView: React.FC<StudentsViewProps> = ({ onStudentClick }) =>
         </div>
       </div>
 
-      {/* Row 2: Search & Filter Controls */}
+      {/* Row 2: Search... */}
       <div className="w-full bg-white p-4 rounded-[2.5rem] shadow-xl border-2 border-slate-100 flex flex-col sm:flex-row items-center gap-4 flex-shrink-0">
         <div className="flex items-center gap-4 bg-slate-50 px-6 py-4 rounded-[1.5rem] border-2 border-slate-100 flex-1 w-full group focus-within:border-[#ec2027] transition-all">
           <Search size={24} className="text-slate-400" strokeWidth={3} />
@@ -76,9 +80,6 @@ export const StudentsView: React.FC<StudentsViewProps> = ({ onStudentClick }) =>
               {MOCK_CLASSES.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
           </div>
-          <button className="p-4 bg-[#292667] text-white rounded-[1.5rem] shadow-xl hover:bg-[#ec2027] transition-all active:scale-95 border-b-4 border-black/20">
-             <Filter size={28} strokeWidth={2.5} />
-          </button>
         </div>
       </div>
 
@@ -126,12 +127,16 @@ export const StudentsView: React.FC<StudentsViewProps> = ({ onStudentClick }) =>
                   </td>
                   <td className="px-8 py-5 text-right">
                     <div className="flex items-center justify-end gap-2">
-                      <button className="p-3 bg-slate-50 text-slate-400 hover:bg-[#292667] hover:text-white rounded-xl transition-all shadow-sm">
-                        <Edit size={20} strokeWidth={3} />
-                      </button>
-                      <button className="p-3 bg-slate-50 text-slate-400 hover:bg-[#ec2027] hover:text-white rounded-xl transition-all shadow-sm">
-                        <Trash2 size={20} strokeWidth={3} />
-                      </button>
+                      {canEdit && (
+                        <button className="p-3 bg-slate-50 text-slate-400 hover:bg-[#292667] hover:text-white rounded-xl transition-all shadow-sm">
+                          <Edit size={20} strokeWidth={3} />
+                        </button>
+                      )}
+                      {canDelete && (
+                        <button className="p-3 bg-slate-50 text-slate-400 hover:bg-[#ec2027] hover:text-white rounded-xl transition-all shadow-sm">
+                          <Trash2 size={20} strokeWidth={3} />
+                        </button>
+                      )}
                     </div>
                   </td>
                 </tr>

@@ -2,9 +2,45 @@
 import { Teacher, Student, ClassInfo, Course, School } from './types';
 
 export const MOCK_SCHOOLS: School[] = [
-  { id: 'sch1', name: 'Downtown Branch', location: 'City Center', teacherQuota: 10, currentTeacherCount: 4, studentQuota: 200, currentStudentCount: 145, adminEmail: 'admin@downtown.ubook.com' },
-  { id: 'sch2', name: 'Westside Academy', location: 'Western District', teacherQuota: 5, currentTeacherCount: 5, studentQuota: 100, currentStudentCount: 88, adminEmail: 'manager@westside.ubook.com' },
-  { id: 'sch3', name: 'Global Park Center', location: 'Tech Park', teacherQuota: 20, currentTeacherCount: 12, studentQuota: 500, currentStudentCount: 320, adminEmail: 'ops@globalpark.ubook.com' },
+  { 
+    id: 'sch1', 
+    name: 'Downtown Branch', 
+    location: 'City Center', 
+    teacherQuota: 10, 
+    currentTeacherCount: 4, 
+    studentQuota: 200, 
+    currentStudentCount: 145, 
+    adminEmail: 'admin@downtown.ubook.com',
+    lat: 37.7749, // San Francisco
+    lng: -122.4194,
+    type: 'HQ'
+  },
+  { 
+    id: 'sch2', 
+    name: 'Westside Academy', 
+    location: 'Western District', 
+    teacherQuota: 5, 
+    currentTeacherCount: 5, 
+    studentQuota: 100, 
+    currentStudentCount: 88, 
+    adminEmail: 'manager@westside.ubook.com',
+    lat: 37.7599, // Mission District
+    lng: -122.4148,
+    type: 'Regional'
+  },
+  { 
+    id: 'sch3', 
+    name: 'Global Park Center', 
+    location: 'Tech Park', 
+    teacherQuota: 20, 
+    currentTeacherCount: 12, 
+    studentQuota: 500, 
+    currentStudentCount: 320, 
+    adminEmail: 'ops@globalpark.ubook.com',
+    lat: 37.8044, // Fisherman's Wharf
+    lng: -122.4081,
+    type: 'Satellite'
+  },
 ];
 
 export const MOCK_COURSES: Course[] = [
@@ -21,31 +57,38 @@ export const MOCK_COURSES: Course[] = [
         id: 'm1',
         title: 'Module 1: Logic & Binary',
         lessons: [
-          { id: 'l1', title: 'Task 1: What is Logic?', type: 'video', content: 'Intro video URL' },
+          { id: 'l1', title: 'Task 1: What is Logic?', type: 'video', content: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
           { id: 'l2', title: 'Task 2: Binary Basics Quiz', type: 'quiz', quiz: [
             { id: 'q1', question: 'What is 1+1 in binary?', options: ['2', '10', '11', '01'], correctAnswer: 1 }
           ]},
-          { id: 'l3', title: 'Task 3: Pattern Matching', type: 'assignment', assignmentInstructions: 'Match the patterns provided in the worksheet.' }
+          { 
+            id: 'l3', 
+            title: 'Task 3: Pattern Matching', 
+            type: 'assignment', 
+            assignmentInstructions: '', // Removed requested text
+            autoPassOnUpload: true,
+            characterLimit: 250,
+            modelAnswer: 'The pattern follows a repetitive A-B-A sequence using basic geometric shapes.'
+          }
         ]
       },
       {
         id: 'm2',
         title: 'Module 2: Robotics Intro',
         lessons: [
-          { id: 'l4', title: 'Task 1: Parts of a Robot', type: 'text', content: 'An overview of sensors, actuators, and controllers.' },
-          { id: 'l5', title: 'Task 2: Assembly Video', type: 'video', content: 'Assembly tutorial' },
-          { id: 'l6', title: 'Task 3: Safety Procedures', type: 'quiz', quiz: [
+          { 
+            id: 'l4', 
+            title: 'Task 4: Parts of a Robot', 
+            type: 'text', 
+            content: 'An overview of sensors, actuators, and controllers.',
+            autoPassOnUpload: true,
+            characterLimit: 1000,
+            modelAnswer: 'A robot consists of a power source, sensors for input, a controller for logic, and actuators for movement.'
+          },
+          { id: 'l5', title: 'Task 5: Assembly Video', type: 'video', content: 'https://vimeo.com/76979871' },
+          { id: 'l6', title: 'Task 6: Safety Procedures', type: 'quiz', quiz: [
             { id: 'q2', question: 'Should you touch moving gears?', options: ['Yes', 'No', 'Maybe', 'Only if wearing gloves'], correctAnswer: 1 }
           ]}
-        ]
-      },
-      {
-        id: 'm3',
-        title: 'Module 3: Visual Coding',
-        lessons: [
-          { id: 'l7', title: 'Task 1: Intro to Blocks', type: 'video', content: 'Block-based coding basics' },
-          { id: 'l8', title: 'Task 2: Create a Loop', type: 'assignment', assignmentInstructions: 'Build a code block that repeats 5 times.' },
-          { id: 'l9', title: 'Task 3: Logic Gates Doc', type: 'text', content: 'Detailed documentation on AND, OR, and NOT gates.' }
         ]
       }
     ]
@@ -81,8 +124,10 @@ export const MOCK_STUDENTS: Student[] = [
     firstName: 'Timmy', 
     lastName: 'Lee', 
     finalGrade: 85, 
+    passingRate: 80,
     attendance: 24, 
     studyTime: 450, 
+    taskCompletion: 75,
     level: 'Digital Kids Starter V2', 
     status: 'active',
     activationDate: '2023-09-15',
@@ -91,14 +136,136 @@ export const MOCK_STUDENTS: Student[] = [
   { 
     id: '2', 
     username: '1000002', 
-    firstName: 'Sara', 
-    lastName: 'Wang', 
+    firstName: 'Sarah', 
+    lastName: 'Chen', 
     finalGrade: 92, 
+    passingRate: 80,
     attendance: 28, 
     studyTime: 520, 
+    taskCompletion: 95,
     level: 'Digital Kids Starter V2', 
     status: 'active',
-    activationDate: '2023-09-16',
+    activationDate: '2023-10-01',
+    registeredClasses: [{ id: 'c1', name: 'Explorers A' }]
+  },
+  { 
+    id: '3', 
+    username: '1000003', 
+    firstName: 'Marcus', 
+    lastName: 'Johnson', 
+    finalGrade: 74, 
+    passingRate: 80,
+    attendance: 20, 
+    studyTime: 380, 
+    taskCompletion: 60,
+    level: 'Digital Kids Starter V2', 
+    status: 'active',
+    activationDate: '2023-09-20',
+    registeredClasses: [{ id: 'c1', name: 'Explorers A' }]
+  },
+  { 
+    id: '4', 
+    username: '1000004', 
+    firstName: 'Elena', 
+    lastName: 'Rodriguez', 
+    finalGrade: 98, 
+    passingRate: 80,
+    attendance: 30, 
+    studyTime: 600, 
+    taskCompletion: 100,
+    level: 'Digital Kids Starter V2', 
+    status: 'active',
+    activationDate: '2023-09-12',
+    registeredClasses: [{ id: 'c1', name: 'Explorers A' }]
+  },
+  { 
+    id: '5', 
+    username: '1000005', 
+    firstName: 'Kevin', 
+    lastName: 'Park', 
+    finalGrade: 62, 
+    passingRate: 80,
+    attendance: 15, 
+    studyTime: 210, 
+    taskCompletion: 45,
+    level: 'Digital Kids Starter V2', 
+    status: 'active',
+    activationDate: '2023-10-05',
+    registeredClasses: [{ id: 'c1', name: 'Explorers A' }]
+  },
+  { 
+    id: '6', 
+    username: '1000006', 
+    firstName: 'Zoe', 
+    lastName: 'Williams', 
+    finalGrade: 88, 
+    passingRate: 80,
+    attendance: 26, 
+    studyTime: 480, 
+    taskCompletion: 85,
+    level: 'Digital Kids Starter V2', 
+    status: 'active',
+    activationDate: '2023-09-28',
+    registeredClasses: [{ id: 'c1', name: 'Explorers A' }]
+  },
+  { 
+    id: '7', 
+    username: '1000007', 
+    firstName: 'Leo', 
+    lastName: 'Garcia', 
+    finalGrade: 79, 
+    passingRate: 80,
+    attendance: 22, 
+    studyTime: 400, 
+    taskCompletion: 70,
+    level: 'Digital Kids Starter V2', 
+    status: 'active',
+    activationDate: '2023-11-02',
+    registeredClasses: [{ id: 'c1', name: 'Explorers A' }]
+  },
+  { 
+    id: '8', 
+    username: '1000008', 
+    firstName: 'Maya', 
+    lastName: 'Patel', 
+    finalGrade: 95, 
+    passingRate: 80,
+    attendance: 29, 
+    studyTime: 580, 
+    taskCompletion: 92,
+    level: 'Digital Kids Starter V2', 
+    status: 'active',
+    activationDate: '2023-09-10',
+    registeredClasses: [{ id: 'c1', name: 'Explorers A' }]
+  },
+  { 
+    id: '9', 
+    username: '1000009', 
+    firstName: 'Oscar', 
+    lastName: 'Jones', 
+    finalGrade: 45, 
+    passingRate: 80,
+    attendance: 10, 
+    studyTime: 120, 
+    taskCompletion: 30,
+    level: 'Digital Kids Starter V2', 
+    status: 'active',
+    activationDate: '2023-10-15',
+    registeredClasses: [{ id: 'c1', name: 'Explorers A' }]
+  },
+  { 
+    id: '10', 
+    username: '1000010', 
+    firstName: 'Sienna', 
+    lastName: 'Vazquez', 
+    finalGrade: 81, 
+    passingRate: 80,
+    attendance: 25, 
+    studyTime: 460, 
+    taskCompletion: 78,
+    level: 'Digital Kids Starter V2', 
+    status: 'active',
+    activationDate: '2023-09-30',
     registeredClasses: [{ id: 'c1', name: 'Explorers A' }]
   }
 ];
@@ -117,18 +284,18 @@ export const MOCK_CLASSES: ClassInfo[] = [
   },
   { 
     id: 'c2', 
-    name: 'Creators B', 
-    level: 'Level 1 Core', 
-    students: MOCK_STUDENTS.slice(0, 1),
+    name: 'Robo Squad B', 
+    level: 'Level 1 Core Robotics', 
+    students: MOCK_STUDENTS.slice(0, 5),
     teachers: [MOCK_TEACHER],
     courseId: 'rs2',
     schedule: 'Tue / Thu 02:00 PM',
-    progress: 30,
-    lastActivity: 'Yesterday'
-  },
+    progress: 40,
+    lastActivity: '1 day ago'
+  }
 ];
 
-export const LEVELS = ['Digital Kids Starter V2', 'Level 1 Core', 'Level 2 Advanced'];
+export const LEVELS = ['Digital Kids Starter V2', 'Level 1 Core Robotics', 'Level 2 Advanced Robotics'];
 export const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 export const LANGUAGES = ['English', 'Spanish', 'Portuguese', 'Chinese'];
 export const MODULES = ['Module 1: Logic & Binary', 'Module 2: Robotics Basics', 'Module 3: AI Concepts', 'Module 4: Game Design'];

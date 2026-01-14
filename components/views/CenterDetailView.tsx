@@ -24,13 +24,15 @@ import {
   GraduationCap,
   Lock,
   ShoppingBag,
-  ClipboardList
+  ClipboardList,
+  Eye
 } from 'lucide-react';
 
 interface CenterDetailViewProps {
   centerId: string;
   onBack: () => void;
   onManageCourse: (courseId: string) => void;
+  onPreviewCourse: (courseId: string) => void;
 }
 
 const OrderRequiredModal = ({ onClose }: { onClose: () => void }) => (
@@ -163,7 +165,7 @@ const HubSettingsModal = ({ school, onClose }: { school: any, onClose: () => voi
   </div>
 );
 
-export const CenterDetailView: React.FC<CenterDetailViewProps> = ({ centerId, onBack, onManageCourse }) => {
+export const CenterDetailView: React.FC<CenterDetailViewProps> = ({ centerId, onBack, onManageCourse, onPreviewCourse }) => {
   const school = MOCK_SCHOOLS.find(s => s.id === centerId) || MOCK_SCHOOLS[0];
   const [isAddingCourse, setIsAddingCourse] = useState(false);
   const [isEditingHub, setIsEditingHub] = useState(false);
@@ -313,7 +315,10 @@ export const CenterDetailView: React.FC<CenterDetailViewProps> = ({ centerId, on
                  {MOCK_COURSES.filter(c => c.isPurchased).map((course, idx) => (
                    <div key={course.id} className="bg-slate-50 p-6 md:p-8 rounded-[2rem] border-2 border-transparent hover:border-[#00a651] hover:bg-white transition-all group flex flex-col shadow-lg overflow-hidden animate-in slide-in-from-bottom-8 h-full" style={{ animationDelay: `${idx * 80}ms` }}>
                       <div className="flex items-start justify-between mb-4 md:mb-6 flex-shrink-0">
-                         <div className="w-14 h-14 md:w-16 md:h-16 bg-[#292667] text-[#fbee21] rounded-2xl shadow-xl flex items-center justify-center group-hover:rotate-6 transition-transform flex-shrink-0">
+                         <div 
+                           onClick={() => onPreviewCourse(course.id)}
+                           className="w-14 h-14 md:w-16 md:h-16 bg-[#292667] text-[#fbee21] rounded-2xl shadow-xl flex items-center justify-center group-hover:rotate-6 transition-transform flex-shrink-0 cursor-pointer"
+                         >
                            <LayoutGrid size={28} strokeWidth={2.5} />
                          </div>
                          <div className="p-2 md:p-2.5 bg-white text-[#00a651] rounded-xl shadow-md group-hover:bg-[#00a651] group-hover:text-white transition-all">
@@ -326,15 +331,23 @@ export const CenterDetailView: React.FC<CenterDetailViewProps> = ({ centerId, on
                             <span className="px-2.5 py-1 bg-[#00a651]/10 text-[#00a651] text-[9px] font-black uppercase tracking-widest rounded-lg">LICENSE ACTIVE</span>
                             <Sparkles size={12} className="text-amber-400" />
                          </div>
-                         <h4 className="text-xl md:text-2xl font-black text-[#292667] uppercase tracking-tight leading-tight mb-2 md:mb-3 group-hover:text-[#00a651] transition-colors line-clamp-2">{course.name}</h4>
+                         <h4 
+                           onClick={() => onPreviewCourse(course.id)}
+                           className="text-xl md:text-2xl font-black text-[#292667] uppercase tracking-tight leading-tight mb-2 md:mb-3 group-hover:text-[#00a651] transition-colors line-clamp-2 cursor-pointer"
+                         >
+                           {course.name}
+                         </h4>
                          <p className="text-[10px] md:text-xs text-slate-400 font-bold leading-relaxed line-clamp-3">{course.description}</p>
                       </div>
 
                       <div className="mt-auto grid grid-cols-2 gap-3 md:gap-4 flex-shrink-0">
-                         <div className="p-3 md:p-4 bg-white rounded-2xl border border-slate-100 flex items-center justify-center gap-2 md:gap-3 group-hover:bg-slate-50 transition-colors">
-                            <Users size={16} className="text-[#3b82f6]" />
-                            <span className="text-[9px] md:text-[10px] font-black text-[#292667] uppercase tracking-widest leading-none">Unlimited</span>
-                         </div>
+                         <button 
+                            onClick={() => onPreviewCourse(course.id)}
+                            className="p-3 md:p-4 bg-white rounded-2xl border border-slate-100 flex items-center justify-center gap-2 md:gap-3 group-hover:bg-slate-50 transition-colors"
+                          >
+                            <Eye size={16} className="text-[#3b82f6]" />
+                            <span className="text-[9px] md:text-[10px] font-black text-[#292667] uppercase tracking-widest leading-none">Preview</span>
+                         </button>
                          <button 
                             onClick={() => onManageCourse(course.id)}
                             className="p-3 md:p-4 bg-[#292667] text-white rounded-2xl font-black text-[9px] md:text-[10px] uppercase tracking-widest hover:bg-[#ec2027] transition-all flex items-center justify-center gap-2 shadow-md active:scale-95 border-b-4 border-black/10"

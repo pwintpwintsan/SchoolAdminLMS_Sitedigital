@@ -24,37 +24,17 @@ import {
 
 interface RolesPermissionsViewProps {
   onRegisterBranch: () => void;
+  rolePerms: Record<string, UserPermissions>;
+  setRolePerms: React.Dispatch<React.SetStateAction<Record<string, UserPermissions>>>;
 }
 
-export const RolesPermissionsView: React.FC<RolesPermissionsViewProps> = ({ onRegisterBranch }) => {
+export const RolesPermissionsView: React.FC<RolesPermissionsViewProps> = ({ onRegisterBranch, rolePerms, setRolePerms }) => {
   const [schools, setSchools] = useState<School[]>(MOCK_SCHOOLS);
   const [selectedSchoolId, setSelectedSchoolId] = useState<string>(MOCK_SCHOOLS[0].id);
   const [isEditingQuota, setIsEditingQuota] = useState(false);
 
   const roles = ['Student', 'Teacher', 'School Admin'];
   const selectedSchool = schools.find(s => s.id === selectedSchoolId) || schools[0];
-
-  // Permissions state organized for easy matrix mapping
-  const [rolePerms, setRolePerms] = useState<Record<string, UserPermissions>>({
-    'Student': {
-      courses: { view: true, edit: false, delete: false },
-      certificates: { view: true, edit: false },
-      accounts: { view: false, create: false, edit: false, delete: false },
-      resources: { view: true, upload: false, delete: false },
-    },
-    'Teacher': {
-      courses: { view: true, edit: false, delete: false },
-      certificates: { view: true, edit: true },
-      accounts: { view: true, create: false, edit: false, delete: false },
-      resources: { view: true, upload: true, delete: false },
-    },
-    'School Admin': {
-      courses: { view: true, edit: true, delete: true },
-      certificates: { view: true, edit: true },
-      accounts: { view: true, create: true, edit: true, delete: true },
-      resources: { view: true, upload: true, delete: true },
-    }
-  });
 
   const togglePerm = (role: string, category: keyof UserPermissions, action: string) => {
     const updatedRolePerms = { ...rolePerms[role] };

@@ -18,7 +18,7 @@ export interface QuizQuestion {
   id: string;
   question: string;
   options: string[];
-  correctAnswer: number;
+  correctAnswer: number; // Index of the correct option
 }
 
 export interface Lesson {
@@ -28,6 +28,9 @@ export interface Lesson {
   content?: string;
   quiz?: QuizQuestion[];
   assignmentInstructions?: string;
+  characterLimit?: number; // Max characters for student response
+  modelAnswer?: string; // Reference text for non-quiz tasks
+  autoPassOnUpload?: boolean; // If true, task is marked passed as soon as learner submits a file
 }
 
 export interface Module {
@@ -43,6 +46,8 @@ export interface Course {
   thumbnail: string;
   description?: string;
   category?: string;
+  level?: string;
+  duration?: string;
   modules: Module[];
   lastUpdated?: string;
 }
@@ -56,6 +61,9 @@ export interface School {
   studentQuota: number;
   currentStudentCount: number;
   adminEmail: string;
+  lat: number;
+  lng: number;
+  type: 'HQ' | 'Satellite' | 'Regional' | 'Franchise';
 }
 
 export interface Student {
@@ -64,8 +72,10 @@ export interface Student {
   firstName: string;
   lastName: string;
   finalGrade: number;
+  passingRate: number;
   attendance: number;
   studyTime: number;
+  taskCompletion: number; // Percentage of tasks/assignments finished
   level: string;
   status: 'active' | 'inactive';
   activationDate?: string;
@@ -112,5 +122,6 @@ export enum View {
   ROLES_PERMISSIONS = 'roles-permissions',
   EDIT_CERTIFICATES = 'edit-certificates',
   ACCOUNT_CREATION = 'account-creation',
-  REGISTER_BRANCH = 'register-branch'
+  REGISTER_BRANCH = 'register-branch',
+  COURSE_VIEWER = 'course-viewer'
 }
