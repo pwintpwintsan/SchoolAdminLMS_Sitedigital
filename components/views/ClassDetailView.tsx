@@ -391,7 +391,7 @@ export const ClassDetailView: React.FC<ClassDetailViewProps> = ({ classId, onStu
                   {activeTab === 'students' && (
                     <>
                       <th className="px-10 py-5">PROGRESS</th>
-                      <th className="px-10 py-5">RESULTS</th>
+                      <th className="px-10 py-5">SUBMISSION RECORDS</th>
                     </>
                   )}
                   <th className="px-10 py-5 text-right">CONTROLS</th>
@@ -427,7 +427,7 @@ export const ClassDetailView: React.FC<ClassDetailViewProps> = ({ classId, onStu
                             <button 
                               onClick={() => onStudentClick(s.id)}
                               className="p-2.5 bg-slate-100 text-slate-400 hover:bg-[#292667] hover:text-white rounded-xl transition-all shadow-sm group/btn"
-                              title="View detailed results"
+                              title="View Submission Records"
                             >
                               <Eye size={18} strokeWidth={3} className="group-hover/btn:scale-110 transition-transform" />
                             </button>

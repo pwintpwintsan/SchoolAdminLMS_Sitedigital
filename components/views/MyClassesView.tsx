@@ -1,5 +1,5 @@
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Teacher, ClassInfo, UserRole, School, Course } from '../../types.ts';
 import { 
   Users, 
@@ -20,9 +20,10 @@ import {
   Navigation,
   Activity,
   ArrowUpDown,
-  Eye
+  Eye,
+  Globe
 } from 'lucide-react';
-import { LEVELS, MOCK_SCHOOLS, MOCK_COURSES } from '../../constants.tsx';
+import { LEVELS, MOCK_SCHOOLS, MOCK_COURSES, REGIONS } from '../../constants.tsx';
 
 interface MyClassesViewProps { 
   teacher: Teacher;
@@ -34,72 +35,26 @@ interface MyClassesViewProps {
   onAddBranch: () => void;
 }
 
-// Distance Calculation Helper (Haversine Formula)
-const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
-  const R = 6371; // Earth radius in km
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLon = (lon2 - lon1) * Math.PI / 180;
-  const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-            Math.sin(dLon/2) * Math.sin(dLon/2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-  return R * c;
-};
-
 export const MyClassesView: React.FC<MyClassesViewProps> = ({ teacher, classes, activeRole, onEnterClass, onEnterCenter, onEnterCourse, onAddBranch }) => {
   const [filterText, setFilterText] = useState('');
   const [levelFilter, setLevelFilter] = useState('all');
   const [typeFilter, setTypeFilter] = useState('all');
   const [courseFilter, setCourseFilter] = useState('all');
-  const [isNearbyActive, setIsNearbyActive] = useState(false);
-  const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
-  const [locationError, setLocationError] = useState<string | null>(null);
+  const [regionFilter, setRegionFilter] = useState('all');
   
   const isAdmin = activeRole === UserRole.MAIN_CENTER;
 
-  // Handle Geolocation
-  useEffect(() => {
-    if (isNearbyActive && !userLocation) {
-      if ("geolocation" in navigator) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            setUserLocation({
-              lat: position.coords.latitude,
-              lng: position.coords.longitude
-            });
-            setLocationError(null);
-          },
-          (err) => {
-            setLocationError("Location access denied.");
-            setIsNearbyActive(false);
-          }
-        );
-      } else {
-        setLocationError("Geolocation not supported.");
-        setIsNearbyActive(false);
-      }
-    }
-  }, [isNearbyActive, userLocation]);
-
-  const sortedAndFilteredSchools = useMemo(() => {
+  const filteredSchools = useMemo(() => {
     if (!isAdmin) return [];
 
-    let result = MOCK_SCHOOLS.filter(s => {
+    return MOCK_SCHOOLS.filter(s => {
       const matchesSearch = s.name.toLowerCase().includes(filterText.toLowerCase()) || 
                             s.location.toLowerCase().includes(filterText.toLowerCase());
       const matchesType = typeFilter === 'all' || s.type === typeFilter;
-      return matchesSearch && matchesType;
+      const matchesRegion = regionFilter === 'all' || s.region === regionFilter;
+      return matchesSearch && matchesType && matchesRegion;
     });
-
-    if (isNearbyActive && userLocation) {
-      result = result.map(s => ({
-        ...s,
-        distance: calculateDistance(userLocation.lat, userLocation.lng, s.lat, s.lng)
-      })).sort((a, b) => (a.distance || 0) - (b.distance || 0));
-    }
-
-    return result;
-  }, [filterText, typeFilter, isNearbyActive, userLocation, isAdmin]);
+  }, [filterText, typeFilter, regionFilter, isAdmin]);
 
   const filteredClasses = useMemo(() => {
     if (isAdmin) return [];
@@ -139,7 +94,6 @@ export const MyClassesView: React.FC<MyClassesViewProps> = ({ teacher, classes, 
                 <span className="px-3 py-1 bg-white/10 rounded-lg text-[10px] font-black uppercase tracking-widest text-white/80 border border-white/5">
                   {isAdmin ? 'Main Control' : 'Educator Panel'}
                 </span>
-                {locationError && <span className="text-[10px] font-black text-red-400 uppercase bg-red-400/10 px-2 py-0.5 rounded">{locationError}</span>}
              </div>
            </div>
         </div>
@@ -187,19 +141,22 @@ export const MyClassesView: React.FC<MyClassesViewProps> = ({ teacher, classes, 
         {/* Filters Group */}
         <div className="flex flex-1 flex-wrap items-center gap-3">
           
-          {/* Nearby Toggle (Admin Only) */}
+          {/* Region Filter (Admin Only) - Replaced Nearby */}
           {isAdmin && (
-            <button 
-              onClick={() => setIsNearbyActive(!isNearbyActive)}
-              className={`flex items-center gap-2 px-5 py-4 rounded-2xl font-black text-[11px] uppercase tracking-widest transition-all border-b-4 ${
-                isNearbyActive 
-                  ? 'bg-[#ec2027] text-white border-red-900 shadow-lg' 
-                  : 'bg-slate-50 text-slate-400 border-slate-200 hover:bg-slate-100'
-              }`}
-            >
-              <Navigation size={18} fill={isNearbyActive ? 'white' : 'none'} className={isNearbyActive ? 'animate-pulse' : ''} />
-              Nearby
-            </button>
+            <div className="flex-1 min-w-[140px] relative group">
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-hover:text-[#292667] transition-colors pointer-events-none z-10">
+                <Globe size={16} strokeWidth={3} />
+              </div>
+              <select 
+                value={regionFilter}
+                onChange={(e) => setRegionFilter(e.target.value)}
+                className="w-full bg-slate-50 pl-11 pr-8 py-4 rounded-2xl border-2 border-slate-100 outline-none font-black text-[11px] text-[#292667] uppercase appearance-none cursor-pointer hover:border-slate-200 transition-all shadow-sm"
+              >
+                <option value="all">All Regions</option>
+                {REGIONS.map(r => <option key={r} value={r}>{r} Region</option>)}
+              </select>
+              <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+            </div>
           )}
 
           {/* Type/Level Filter */}
@@ -251,25 +208,20 @@ export const MyClassesView: React.FC<MyClassesViewProps> = ({ teacher, classes, 
       <div className="flex-1 overflow-y-auto scrollbar-hide pr-1">
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6 pb-6">
           {isAdmin ? (
-            sortedAndFilteredSchools.map((school: any, idx) => (
+            filteredSchools.map((school: any, idx) => (
               <div 
                 key={school.id} 
                 onClick={() => onEnterCenter(school.id)}
                 className="bg-white rounded-[2rem] shadow-xl border-4 border-transparent hover:border-[#fbee21] transition-all group flex flex-col overflow-hidden h-fit relative cursor-pointer"
               >
-                {/* Distance Badge */}
-                {isNearbyActive && school.distance !== undefined && (
-                  <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-xl border-2 border-slate-100 shadow-xl z-20 flex items-center gap-2">
-                    <Navigation size={12} className="text-[#ec2027]" strokeWidth={3} />
-                    <span className="text-[10px] font-black text-[#292667]">{school.distance.toFixed(1)} km</span>
-                  </div>
-                )}
-
                 <div className={`p-6 md:p-8 flex justify-between items-start ${school.type === 'HQ' ? 'bg-[#ec2027]/5' : school.type === 'Regional' ? 'bg-[#3b82f6]/5' : 'bg-[#00a651]/5'}`}>
                   <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2 mb-2">
+                    <div className="flex flex-wrap gap-2 mb-2">
                        <span className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest text-white ${school.type === 'HQ' ? 'bg-[#ec2027]' : school.type === 'Regional' ? 'bg-[#3b82f6]' : 'bg-[#00a651]'}`}>
                         {school.type} HUB
+                      </span>
+                      <span className="px-3 py-1 bg-[#292667]/10 rounded-lg text-[9px] font-black uppercase tracking-widest text-[#292667]">
+                        {school.region}
                       </span>
                     </div>
                     <h3 className="text-xl md:text-2xl font-black text-[#292667] leading-tight tracking-tight uppercase group-hover:text-[#ec2027] transition-colors">{school.name}</h3>
@@ -355,7 +307,7 @@ export const MyClassesView: React.FC<MyClassesViewProps> = ({ teacher, classes, 
         </div>
         
         {/* Empty States */}
-        {((isAdmin && sortedAndFilteredSchools.length === 0) || (!isAdmin && filteredClasses.length === 0)) && (
+        {((isAdmin && filteredSchools.length === 0) || (!isAdmin && filteredClasses.length === 0)) && (
           <div className="w-full py-32 bg-white rounded-[3rem] border-4 border-dashed border-slate-100 flex flex-col items-center justify-center text-center animate-in zoom-in-95">
              <div className="p-10 bg-slate-50 rounded-full text-slate-200 mb-6">
                 <Search size={80} strokeWidth={1} />
@@ -363,7 +315,7 @@ export const MyClassesView: React.FC<MyClassesViewProps> = ({ teacher, classes, 
              <h4 className="text-3xl font-black text-[#292667] uppercase tracking-tighter">No Hubs Found</h4>
              <p className="text-sm font-bold text-slate-400 mt-2 uppercase tracking-widest max-w-sm">Try adjusting your filters or search terms to find what you're looking for.</p>
              <button 
-               onClick={() => { setFilterText(''); setLevelFilter('all'); setTypeFilter('all'); setCourseFilter('all'); setIsNearbyActive(false); }}
+               onClick={() => { setFilterText(''); setLevelFilter('all'); setTypeFilter('all'); setCourseFilter('all'); setRegionFilter('all'); }}
                className="mt-10 px-10 py-5 bg-[#292667] text-[#fbee21] rounded-3xl font-black text-xs uppercase tracking-[0.2em] hover:bg-[#ec2027] hover:text-white transition-all shadow-xl active:scale-95"
              >
                Clear All Filters

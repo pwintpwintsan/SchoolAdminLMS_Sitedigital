@@ -90,7 +90,7 @@ export const StudentsView: React.FC<StudentsViewProps> = ({ onStudentClick, chec
               <tr>
                 <th className="px-8 py-6">ID Code</th>
                 <th className="px-8 py-6">Full Name</th>
-                <th className="px-8 py-6">Story Level</th>
+                <th className="px-8 py-6">Registered Course</th>
                 <th className="px-8 py-6">Final Grade</th>
                 <th className="px-8 py-6">Status</th>
                 <th className="px-8 py-6 text-right">Actions</th>

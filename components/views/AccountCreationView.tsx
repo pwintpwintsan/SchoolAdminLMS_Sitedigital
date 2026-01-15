@@ -209,7 +209,7 @@ export const AccountCreationView: React.FC = () => {
                   </div>
 
                   <button type="submit" className="w-full py-6 px-8 bg-[#292667] text-white rounded-[2.5rem] font-black text-xl uppercase tracking-widest shadow-2xl hover:bg-[#f43f5e] transition-all border-b-8 border-black/10 active:scale-95 transform translate-y-1">
-                     Confirm Provisioning
+                     Create
                   </button>
                </form>
             </div>

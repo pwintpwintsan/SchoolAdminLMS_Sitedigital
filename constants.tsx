@@ -6,6 +6,7 @@ export const MOCK_SCHOOLS: School[] = [
     id: 'sch1', 
     name: 'Downtown Branch', 
     location: 'City Center', 
+    region: 'Central',
     teacherQuota: 10, 
     currentTeacherCount: 4, 
     studentQuota: 200, 
@@ -19,6 +20,7 @@ export const MOCK_SCHOOLS: School[] = [
     id: 'sch2', 
     name: 'Westside Academy', 
     location: 'Western District', 
+    region: 'West',
     teacherQuota: 5, 
     currentTeacherCount: 5, 
     studentQuota: 100, 
@@ -32,6 +34,7 @@ export const MOCK_SCHOOLS: School[] = [
     id: 'sch3', 
     name: 'Global Park Center', 
     location: 'Tech Park', 
+    region: 'North',
     teacherQuota: 20, 
     currentTeacherCount: 12, 
     studentQuota: 500, 
@@ -57,18 +60,20 @@ export const MOCK_COURSES: Course[] = [
         id: 'm1',
         title: 'Module 1: Logic & Binary',
         lessons: [
-          { id: 'l1', title: 'Task 1: What is Logic?', type: 'video', content: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
+          { id: 'l1', title: 'Task 1: What is Logic?', type: 'video', content: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', isPublished: true, isSample: true },
           { id: 'l2', title: 'Task 2: Binary Basics Quiz', type: 'quiz', quiz: [
             { id: 'q1', question: 'What is 1+1 in binary?', options: ['2', '10', '11', '01'], correctAnswer: 1 }
-          ]},
+          ], isPublished: true, isSample: true },
           { 
             id: 'l3', 
             title: 'Task 3: Pattern Matching', 
             type: 'assignment', 
-            assignmentInstructions: '', // Removed requested text
+            assignmentInstructions: '', 
             autoPassOnUpload: true,
             characterLimit: 250,
-            modelAnswer: 'The pattern follows a repetitive A-B-A sequence using basic geometric shapes.'
+            modelAnswer: 'The pattern follows a repetitive A-B-A sequence using basic geometric shapes.',
+            isPublished: true,
+            isSample: false
           }
         ]
       },
@@ -83,12 +88,14 @@ export const MOCK_COURSES: Course[] = [
             content: 'An overview of sensors, actuators, and controllers.',
             autoPassOnUpload: true,
             characterLimit: 1000,
-            modelAnswer: 'A robot consists of a power source, sensors for input, a controller for logic, and actuators for movement.'
+            modelAnswer: 'A robot consists of a power source, sensors for input, a controller for logic, and actuators for movement.',
+            isPublished: true,
+            isSample: true
           },
-          { id: 'l5', title: 'Task 5: Assembly Video', type: 'video', content: 'https://vimeo.com/76979871' },
+          { id: 'l5', title: 'Task 5: Assembly Video', type: 'video', content: 'https://vimeo.com/76979871', isPublished: true, isSample: false },
           { id: 'l6', title: 'Task 6: Safety Procedures', type: 'quiz', quiz: [
             { id: 'q2', question: 'Should you touch moving gears?', options: ['Yes', 'No', 'Maybe', 'Only if wearing gloves'], correctAnswer: 1 }
-          ]}
+          ], isPublished: true, isSample: false }
         ]
       }
     ]
@@ -299,3 +306,4 @@ export const LEVELS = ['Digital Kids Starter V2', 'Level 1 Core Robotics', 'Leve
 export const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 export const LANGUAGES = ['English', 'Spanish', 'Portuguese', 'Chinese'];
 export const MODULES = ['Module 1: Logic & Binary', 'Module 2: Robotics Basics', 'Module 3: AI Concepts', 'Module 4: Game Design'];
+export const REGIONS = ['North', 'South', 'East', 'West', 'Central', 'Overseas'];

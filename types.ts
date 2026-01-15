@@ -31,6 +31,8 @@ export interface Lesson {
   characterLimit?: number; // Max characters for student response
   modelAnswer?: string; // Reference text for non-quiz tasks
   autoPassOnUpload?: boolean; // If true, task is marked passed as soon as learner submits a file
+  isPublished?: boolean; // Visibility status
+  isSample?: boolean; // Whether this is a free sample task
 }
 
 export interface Module {
@@ -56,6 +58,7 @@ export interface School {
   id: string;
   name: string;
   location: string;
+  region: string; // Added for regional filtering
   teacherQuota: number;
   currentTeacherCount: number;
   studentQuota: number;

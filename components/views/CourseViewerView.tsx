@@ -19,7 +19,8 @@ import {
   MessageSquare,
   Send,
   ShieldCheck,
-  Zap
+  Zap,
+  Globe
 } from 'lucide-react';
 
 interface CourseViewerViewProps {
@@ -144,6 +145,11 @@ export const CourseViewerView: React.FC<CourseViewerViewProps> = ({ courseId, on
                                {lesson.autoPassOnUpload && (
                                  <Zap size={8} className="text-amber-400" />
                                )}
+                               {lesson.isSample && (
+                                 <div className="flex items-center gap-1 bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded text-[7px] font-black uppercase">
+                                   <Globe size={6} /> Published Sample
+                                 </div>
+                               )}
                             </div>
                           </div>
                         </div>
@@ -182,7 +188,12 @@ export const CourseViewerView: React.FC<CourseViewerViewProps> = ({ courseId, on
                         {getLessonIcon(activeLesson.type)}
                      </div>
                      <div>
-                        <h3 className="text-2xl font-black text-[#292667] uppercase tracking-tighter leading-none">{activeLesson.title}</h3>
+                        <div className="flex items-center gap-3">
+                           <h3 className="text-2xl font-black text-[#292667] uppercase tracking-tighter leading-none">{activeLesson.title}</h3>
+                           {activeLesson.isSample && (
+                             <span className="px-3 py-1 bg-emerald-50 text-emerald-600 rounded-lg text-[9px] font-black uppercase tracking-widest border border-emerald-100">Sample Task</span>
+                           )}
+                        </div>
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2">Active Task Content</p>
                      </div>
                   </div>

@@ -28,7 +28,8 @@ import {
   Hash,
   ToggleRight,
   Zap,
-  Lock
+  Lock,
+  Globe
 } from 'lucide-react';
 
 interface CoursesAdminViewProps {
@@ -221,7 +222,9 @@ export const CoursesAdminView: React.FC<CoursesAdminViewProps> = ({ initialCours
       content: '',
       quiz: type === 'quiz' ? [] : undefined,
       characterLimit: (type === 'assignment' || type === 'text') ? 500 : undefined,
-      autoPassOnUpload: (type === 'assignment' || type === 'text') ? false : undefined
+      autoPassOnUpload: (type === 'assignment' || type === 'text') ? false : undefined,
+      isPublished: true,
+      isSample: false
     };
     const updatedModules = [...editingCourse.modules];
     updatedModules[moduleIdx].lessons.push(newLesson);
@@ -377,12 +380,20 @@ export const CoursesAdminView: React.FC<CoursesAdminViewProps> = ({ initialCours
                                 setEditingCourse(updated);
                               }}
                             />
-                            {lesson.autoPassOnUpload && (
-                              <div className="flex items-center gap-1 mt-1 text-[#00a651]">
-                                <Zap size={10} fill="currentColor" />
-                                <span className="text-[8px] font-black uppercase tracking-widest">Auto-Pass Active</span>
-                              </div>
-                            )}
+                            <div className="flex items-center gap-3 mt-2">
+                               {lesson.autoPassOnUpload && (
+                                 <div className="flex items-center gap-1 text-[#00a651]">
+                                   <Zap size={10} fill="currentColor" />
+                                   <span className="text-[8px] font-black uppercase tracking-widest">Auto-Pass</span>
+                                 </div>
+                               )}
+                               {lesson.isSample && (
+                                 <div className="flex items-center gap-1 text-[#3b82f6]">
+                                   <Globe size={10} strokeWidth={3} />
+                                   <span className="text-[8px] font-black uppercase tracking-widest">Published Sample</span>
+                                 </div>
+                               )}
+                            </div>
                           </div>
                         </div>
                         {canEdit && (
@@ -391,6 +402,38 @@ export const CoursesAdminView: React.FC<CoursesAdminViewProps> = ({ initialCours
                       </div>
                       
                       <div className="bg-white p-6 rounded-[2rem] border-2 border-slate-100 shadow-inner space-y-6">
+                         {/* Status Toggles: Published and Sample */}
+                         {canEdit && (
+                           <div className="flex flex-wrap items-center gap-4 border-b border-slate-50 pb-6">
+                              <div className="flex items-center gap-3 bg-slate-50 px-4 py-2.5 rounded-xl border border-slate-100">
+                                 <span className="text-[9px] font-black text-[#292667] uppercase tracking-widest">Visibility</span>
+                                 <button 
+                                   onClick={() => {
+                                      const newMods = [...editingCourse.modules];
+                                      newMods[activeModuleIndex!].lessons[lessonIdx].isPublished = !lesson.isPublished;
+                                      setEditingCourse({...editingCourse, modules: newMods});
+                                   }}
+                                   className={`px-3 py-1 rounded-lg text-[8px] font-black uppercase transition-all ${lesson.isPublished ? 'bg-[#00a651] text-white' : 'bg-slate-200 text-slate-400'}`}
+                                 >
+                                    {lesson.isPublished ? 'Published' : 'Hidden'}
+                                 </button>
+                              </div>
+                              <div className="flex items-center gap-3 bg-slate-50 px-4 py-2.5 rounded-xl border border-slate-100">
+                                 <span className="text-[9px] font-black text-[#292667] uppercase tracking-widest">Sample Access</span>
+                                 <button 
+                                   onClick={() => {
+                                      const newMods = [...editingCourse.modules];
+                                      newMods[activeModuleIndex!].lessons[lessonIdx].isSample = !lesson.isSample;
+                                      setEditingCourse({...editingCourse, modules: newMods});
+                                   }}
+                                   className={`px-3 py-1 rounded-lg text-[8px] font-black uppercase transition-all ${lesson.isSample ? 'bg-[#3b82f6] text-white' : 'bg-slate-200 text-slate-400'}`}
+                                 >
+                                    {lesson.isSample ? 'Sample Content' : 'Premium Only'}
+                                 </button>
+                              </div>
+                           </div>
+                         )}
+
                          {/* Auto-Pass Toggle */}
                          {(lesson.type === 'assignment' || lesson.type === 'text') && (
                            <div className={`flex items-center justify-between p-4 bg-emerald-50 rounded-2xl border-2 border-emerald-100 group/auto ${!canEdit && 'opacity-60'}`}>
@@ -553,105 +596,6 @@ export const CoursesAdminView: React.FC<CoursesAdminViewProps> = ({ initialCours
               </div>
             )}
           </div>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="h-full flex flex-col gap-6 overflow-hidden animate-in fade-in duration-500">
-      {isAddingCourse && <NewCourseModal onClose={() => setIsAddingCourse(false)} onProceed={handleStartNewCourse} />}
-
-      <div className="w-full bg-[#292667] rounded-[3rem] p-8 text-white shadow-2xl border-b-[12px] border-[#00a651] flex flex-col md:flex-row items-center justify-between gap-8 flex-shrink-0 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-80 h-80 bg-white/5 rounded-full -mr-24 -mt-24 blur-3xl"></div>
-        <div className="flex items-center gap-6 relative z-10">
-           <div className="p-5 bg-[#00a651] rounded-[2rem] text-white shadow-xl rotate-3">
-             <BookOpen size={42} strokeWidth={3} />
-           </div>
-           <div>
-             <h2 className="text-4xl font-black leading-none tracking-tight uppercase">Master <span className="text-[#fbee21]">Hub</span></h2>
-             <div className="flex items-center gap-3 mt-3">
-                <span className="px-3 py-1 bg-white/10 rounded-lg text-[11px] font-black uppercase tracking-[0.1em] text-white">CURRICULUM CENTER</span>
-                <span className="text-[12px] font-black text-[#fbee21] uppercase tracking-[0.15em]">U Book Content Manager</span>
-             </div>
-           </div>
-        </div>
-        {checkPermission?.('courses', 'create') && (
-          <button 
-            onClick={() => setIsAddingCourse(true)}
-            className="flex items-center gap-4 px-10 py-5 bg-[#fbee21] text-[#292667] rounded-[2rem] font-black uppercase tracking-widest text-sm shadow-xl hover:scale-105 active:scale-95 transition-all relative z-10 border-b-6 border-black/10"
-          >
-             <Plus size={28} strokeWidth={4} /> Add Courses
-          </button>
-        )}
-      </div>
-
-      <div className="w-full bg-white p-4 rounded-[2.5rem] shadow-xl border-2 border-slate-100 flex flex-col lg:flex-row items-stretch gap-4 flex-shrink-0">
-        <div className="flex items-center gap-4 bg-slate-50 px-6 py-4 rounded-[1.5rem] border-2 border-slate-100 flex-1 w-full group focus-within:border-[#00a651] transition-all">
-          <Search size={24} className="text-slate-400" strokeWidth={3} />
-          <input 
-            type="text" 
-            placeholder="Search by title, level, or topic..." 
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="bg-transparent text-lg font-black text-[#292667] outline-none w-full placeholder:text-slate-300"
-          />
-        </div>
-        {/* Filters Group omitted for brevity as they don't impact permissions directly */}
-      </div>
-
-      <div className="flex-1 overflow-y-auto scrollbar-hide">
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 pb-6">
-          {filteredCourses.map((course) => (
-            <div key={course.id} className="bg-white rounded-[2.5rem] p-6 border-2 border-slate-100 shadow-xl flex flex-col md:flex-row gap-6 relative overflow-hidden group hover:border-[#00a651] transition-all">
-               <div className="w-32 h-32 md:w-40 md:h-40 rounded-[2rem] overflow-hidden relative shadow-lg flex-shrink-0 border-4 border-slate-50 bg-slate-100 cursor-pointer" onClick={() => onPreviewCourse?.(course.id)}>
-                  <img src={course.thumbnail} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="" />
-                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Eye className="text-white" size={32} />
-                  </div>
-               </div>
-
-               <div className="flex-1 flex flex-col justify-between py-1">
-                  <div>
-                    <div className="flex justify-between items-start mb-2">
-                      <div className="min-w-0 flex-1">
-                        <span className="text-[9px] font-black uppercase bg-[#00a651]/10 text-[#00a651] px-3 py-1 rounded-lg tracking-widest">{course.category}</span>
-                        <h3 
-                          onClick={() => onPreviewCourse?.(course.id)}
-                          className="text-2xl font-black text-[#292667] uppercase mt-2 tracking-tighter leading-none truncate group-hover:text-[#00a651] transition-colors cursor-pointer"
-                        >
-                          {course.name}
-                        </h3>
-                      </div>
-                      <div className="flex gap-2 shrink-0 ml-3">
-                         <button onClick={() => setEditingCourse(course)} className="p-3 bg-slate-50 text-slate-400 hover:text-[#292667] rounded-xl border-2 border-slate-100 shadow-sm transition-all active:scale-90" title={canEdit ? 'Edit' : 'View'}>
-                            {canEdit ? <Edit size={18} /> : <Eye size={18} />}
-                         </button>
-                         {canDelete && (
-                            <button className="p-3 bg-slate-50 text-slate-400 hover:text-white hover:bg-[#ec2027] rounded-xl border-2 border-slate-100 shadow-sm transition-all active:scale-90">
-                               <Trash2 size={18} />
-                            </button>
-                         )}
-                      </div>
-                    </div>
-                    {/* Course details... */}
-                    <p className="text-sm text-slate-500 font-bold mb-4 line-clamp-2 leading-relaxed">{course.description}</p>
-                  </div>
-                  
-                  <div className="flex gap-3">
-                      <button 
-                        onClick={() => setEditingCourse(course)}
-                        className={`flex-1 py-4 px-6 rounded-[1.5rem] font-black text-[11px] uppercase tracking-widest flex items-center justify-center gap-3 transition-all shadow-xl active:scale-95 border-b-4 border-black/10 ${
-                          canEdit ? 'bg-[#292667] text-white hover:bg-[#00a651]' : 'bg-slate-100 text-slate-400'
-                        }`}
-                      >
-                        {canEdit ? <Edit size={16} strokeWidth={3} /> : <Eye size={16} strokeWidth={3} />}
-                        {canEdit ? 'Manage Curriculum' : 'View Syllabus'}
-                      </button>
-                  </div>
-               </div>
-            </div>
-          ))}
         </div>
       </div>
     </div>
