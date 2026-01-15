@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { MOCK_COURSES } from '../../constants.tsx';
+import { MOCK_COURSES, MOCK_SCHOOLS } from '../../constants.tsx';
 import { Course, Module, Lesson, QuizQuestion } from '../../types.ts';
 import { 
   BookOpen, 
@@ -29,7 +29,8 @@ import {
   ToggleRight,
   Zap,
   Lock,
-  Globe
+  Globe,
+  Building2
 } from 'lucide-react';
 
 interface CoursesAdminViewProps {
@@ -101,7 +102,7 @@ const NewCourseModal = ({ onClose, onProceed }: { onClose: () => void, onProceed
               </label>
               <input 
                 type="text" 
-                placeholder="e.g. 12 Weeks" 
+                placeholder="e.g. 12 Hours" 
                 className="w-full px-6 py-5 bg-slate-50 border-2 border-slate-100 rounded-[1.5rem] font-black text-sm text-[#292667] outline-none focus:border-[#00a651] transition-all placeholder:text-slate-200"
                 value={formData.duration}
                 onChange={(e) => setFormData({...formData, duration: e.target.value})}
@@ -184,7 +185,7 @@ export const CoursesAdminView: React.FC<CoursesAdminViewProps> = ({ initialCours
       category: data.category || 'Standard Curriculum',
       description: data.description || '',
       level: data.level || 'Starter',
-      duration: data.duration || '',
+      duration: data.duration || '10 Hours',
       isPurchased: true,
       thumbnail: `https://picsum.photos/seed/${Date.now()}/400/300`,
       modules: [],
@@ -341,18 +342,21 @@ export const CoursesAdminView: React.FC<CoursesAdminViewProps> = ({ initialCours
                       { type: 'quiz', label: 'Quiz', icon: HelpCircle, color: 'amber', bg: 'bg-amber-500' },
                       { type: 'assignment', label: 'Task', icon: ClipboardList, color: 'rose', bg: 'bg-rose-500' },
                       { type: 'text', label: 'Doc', icon: Type, color: 'emerald', bg: 'bg-emerald-500' }
-                    ].map((btn) => (
-                      <button 
-                        key={btn.type}
-                        onClick={() => handleAddLesson(activeModuleIndex!, btn.type as Lesson['type'])} 
-                        className={`flex flex-col items-center justify-center gap-3 p-5 bg-${btn.color}-50 text-${btn.color}-600 rounded-[1.5rem] border-2 border-transparent hover:border-${btn.color}-500 hover:bg-white transition-all shadow-sm group active:scale-95`}
-                      >
-                         <div className={`${btn.bg} text-white p-3 rounded-xl shadow-md group-hover:scale-105 transition-transform`}>
-                           <btn.icon size={24} strokeWidth={2.5} />
-                         </div>
-                         <span className="font-black text-[10px] uppercase tracking-widest">{btn.label}</span>
-                      </button>
-                    ))}
+                    ].map((btn) => {
+                      const BtnIcon = btn.icon;
+                      return (
+                        <button 
+                          key={btn.type}
+                          onClick={() => handleAddLesson(activeModuleIndex!, btn.type as Lesson['type'])} 
+                          className={`flex flex-col items-center justify-center gap-3 p-5 bg-${btn.color}-50 text-${btn.color}-600 rounded-[1.5rem] border-2 border-transparent hover:border-${btn.color}-500 hover:bg-white transition-all shadow-sm group active:scale-95`}
+                        >
+                           <div className={`${btn.bg} text-white p-3 rounded-xl shadow-md group-hover:scale-105 transition-transform`}>
+                             <BtnIcon size={24} strokeWidth={2.5} />
+                           </div>
+                           <span className="font-black text-[10px] uppercase tracking-widest">{btn.label}</span>
+                        </button>
+                      );
+                    })}
                   </div>
                 )}
 
@@ -597,6 +601,179 @@ export const CoursesAdminView: React.FC<CoursesAdminViewProps> = ({ initialCours
             )}
           </div>
         </div>
+      </div>
+    );
+  }
+
+  // Final view for when not in editing mode (shows course list)
+  return (
+    <div className="h-full flex flex-col gap-6 overflow-hidden animate-in fade-in duration-500">
+      {isAddingCourse && <NewCourseModal onClose={() => setIsAddingCourse(false)} onProceed={handleStartNewCourse} />}
+      
+      {/* Header Bar */}
+      <div className="w-full bg-[#292667] rounded-[3rem] p-8 text-white shadow-2xl border-b-[12px] border-[#00a651] flex flex-col md:flex-row items-center justify-between gap-8 flex-shrink-0 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-80 h-80 bg-white/5 rounded-full -mr-24 -mt-24 blur-3xl"></div>
+        <div className="flex items-center gap-6 relative z-10">
+          <div className="p-5 bg-[#00a651] rounded-[2rem] text-white shadow-xl rotate-3">
+            <BookOpen size={42} strokeWidth={3} />
+          </div>
+          <div>
+            <h2 className="text-4xl font-black leading-none tracking-tight uppercase">Course <span className="text-[#fbee21]">Library</span></h2>
+            <div className="flex items-center gap-3 mt-3">
+              <span className="px-3 py-1 bg-white/10 rounded-lg text-[11px] font-black uppercase tracking-[0.1em] text-white">CURRICULUM MANAGER</span>
+              <span className="text-[12px] font-black text-[#fbee21] uppercase tracking-[0.15em]">Official U Book Content</span>
+            </div>
+          </div>
+        </div>
+        {canEdit && (
+          <button 
+            onClick={() => setIsAddingCourse(true)}
+            className="flex items-center gap-4 px-10 py-5 bg-[#fbee21] text-[#292667] rounded-[2rem] font-black text-sm uppercase tracking-widest shadow-xl hover:scale-105 active:scale-95 transition-all border-b-6 border-black/10 relative z-10"
+          >
+            <Plus size={28} strokeWidth={3} />
+            <span>Create New Course</span>
+          </button>
+        )}
+      </div>
+
+      {/* Search & Filters */}
+      <div className="w-full bg-white p-4 rounded-[2.5rem] shadow-xl border-2 border-slate-100 flex flex-col xl:flex-row items-center gap-4 flex-shrink-0">
+        <div className="flex items-center gap-4 bg-slate-50 px-6 py-4 rounded-[1.5rem] border-2 border-slate-100 flex-1 w-full group focus-within:border-[#00a651]">
+          <Search size={24} className="text-slate-400" strokeWidth={3} />
+          <input 
+            type="text" 
+            placeholder="Search courses..." 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="bg-transparent text-lg font-black text-[#292667] outline-none w-full placeholder:text-slate-300"
+          />
+        </div>
+        <div className="flex items-center gap-4 w-full xl:w-auto">
+          <div className="flex items-center gap-3 bg-slate-50 px-6 py-4 rounded-[1.5rem] border-2 border-slate-100 flex-1 min-w-[180px]">
+            <Layers size={20} className="text-[#ec2027]" strokeWidth={3} />
+            <select 
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value)}
+              className="bg-transparent text-sm font-black text-[#292667] outline-none w-full cursor-pointer uppercase"
+            >
+              <option value="all">All Categories</option>
+              <option value="Standard Curriculum">Standard</option>
+              <option value="Robotics">Robotics</option>
+            </select>
+          </div>
+          <div className="flex items-center gap-3 bg-slate-50 px-6 py-4 rounded-[1.5rem] border-2 border-slate-100 flex-1 min-w-[180px]">
+            <Filter size={20} className="text-[#3b82f6]" strokeWidth={3} />
+            <select 
+              value={levelFilter}
+              onChange={(e) => setLevelFilter(e.target.value)}
+              className="bg-transparent text-sm font-black text-[#292667] outline-none w-full cursor-pointer uppercase"
+            >
+              <option value="all">All Levels</option>
+              <option value="Starter">Starter</option>
+              <option value="Intermediate">Intermediate</option>
+              <option value="Advanced">Advanced</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {/* Grid Results */}
+      <div className="flex-1 overflow-y-auto scrollbar-hide pr-1">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 pb-6">
+          {filteredCourses.map((course) => (
+            <div key={course.id} className="bg-white rounded-[2.5rem] shadow-xl border-4 border-transparent hover:border-[#fbee21] transition-all group flex flex-col overflow-hidden h-fit relative">
+              <div className="aspect-[16/10] overflow-hidden relative">
+                <img src={course.thumbnail} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="" />
+                <div className="absolute top-4 right-4 flex flex-col gap-2">
+                  <span className="px-3 py-1 bg-[#292667] text-[#fbee21] rounded-lg text-[9px] font-black uppercase tracking-widest shadow-lg">
+                    {course.level}
+                  </span>
+                  <span className="px-3 py-1 bg-white text-[#292667] rounded-lg text-[9px] font-black uppercase tracking-widest shadow-lg">
+                    {course.category}
+                  </span>
+                </div>
+              </div>
+              
+              <div className="p-8 flex flex-col flex-1">
+                <h3 className="text-xl font-black text-[#292667] uppercase tracking-tight mb-3 line-clamp-1">{course.name}</h3>
+                <p className="text-sm text-slate-400 font-bold mb-6 line-clamp-2 h-10">{course.description}</p>
+                
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                   <div className="bg-slate-50 p-3 rounded-xl border-b-2 border-slate-100 flex items-center gap-3">
+                      <Layers size={16} className="text-[#ec2027]" />
+                      <div className="flex flex-col">
+                        <span className="text-[8px] font-black text-slate-300 uppercase tracking-widest">Lessons</span>
+                        <span className="text-[10px] font-black text-[#292667] uppercase">{course.modules.length} Modules</span>
+                      </div>
+                   </div>
+                   <div className="bg-indigo-50 p-3 rounded-xl border-b-2 border-indigo-100 flex items-center gap-3">
+                      <Clock size={16} className="text-indigo-600" />
+                      <div className="flex flex-col">
+                        <span className="text-[8px] font-black text-indigo-300 uppercase tracking-widest">Duration</span>
+                        <span className="text-[10px] font-black text-indigo-900 uppercase">{course.duration || '10 Hours'}</span>
+                      </div>
+                   </div>
+                </div>
+
+                {/* Registered Schools Display - OBVIOUS STYLE */}
+                <div className="mb-8 pt-4 border-t-2 border-slate-50">
+                  <div className="flex items-center justify-between mb-3">
+                    <p className="text-[10px] font-black text-[#292667] uppercase tracking-widest flex items-center gap-2">
+                      <Building2 size={14} className="text-[#ec2027]" /> Registered Hubs
+                    </p>
+                    <span className="text-[8px] font-black px-2 py-0.5 bg-green-100 text-green-700 rounded-full">ACTIVE LIBRARIES</span>
+                  </div>
+                  <div className="flex flex-wrap gap-3">
+                    {MOCK_SCHOOLS.slice(0, 3).map((school, sIdx) => {
+                      const initials = school.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+                      const colors = [
+                        'bg-[#ec2027] border-red-200 text-white shadow-red-100', 
+                        'bg-[#3b82f6] border-blue-200 text-white shadow-blue-100', 
+                        'bg-[#00a651] border-green-200 text-white shadow-green-100'
+                      ];
+                      return (
+                        <div key={school.id} className="group/school relative">
+                          <div className={`w-10 h-10 rounded-2xl ${colors[sIdx % colors.length]} flex items-center justify-center text-white font-black text-xs border-2 shadow-lg hover:scale-110 transition-all cursor-pointer ring-4 ring-white`}>
+                            {initials}
+                          </div>
+                          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 px-3 py-1.5 bg-[#292667] text-white text-[9px] font-black uppercase rounded-xl shadow-2xl opacity-0 group-hover/school:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-20 border-2 border-white/20 backdrop-blur-sm">
+                            {school.name}
+                          </div>
+                        </div>
+                      )
+                    })}
+                    <div className="w-10 h-10 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 font-black text-[10px] border-2 border-dashed border-slate-200 ring-4 ring-white shadow-sm">
+                      +2
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-auto flex items-center gap-3">
+                   <button 
+                     onClick={() => onPreviewCourse?.(course.id)}
+                     className="flex-1 py-4 bg-slate-50 text-slate-400 hover:text-[#292667] rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 border-b-4 border-slate-100 hover:border-slate-200"
+                   >
+                     <Eye size={16} /> Preview
+                   </button>
+                   <button 
+                     onClick={() => setEditingCourse(course)}
+                     className="flex-1 py-4 bg-[#292667] text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-lg hover:bg-[#00a651] transition-all flex items-center justify-center gap-2 border-b-4 border-black/10"
+                   >
+                     <Edit size={16} /> Edit Design
+                   </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        
+        {filteredCourses.length === 0 && (
+          <div className="py-24 flex flex-col items-center justify-center text-center opacity-30">
+            <FilterX size={80} className="text-slate-200 mb-6" />
+            <h4 className="text-3xl font-black text-[#292667] uppercase">No Match Found</h4>
+            <p className="text-sm font-bold text-slate-400 uppercase mt-2">Try different search terms or categories</p>
+          </div>
+        )}
       </div>
     </div>
   );

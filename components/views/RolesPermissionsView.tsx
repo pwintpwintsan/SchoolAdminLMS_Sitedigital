@@ -207,48 +207,51 @@ export const RolesPermissionsView: React.FC<RolesPermissionsViewProps> = ({ onRe
               </tr>
             </thead>
             <tbody className="divide-y-2 divide-slate-50">
-              {permissionCategories.map((cat) => (
-                <React.Fragment key={cat.id}>
-                  <tr className="bg-slate-50/50">
-                     <td colSpan={roles.length + 1} className="px-10 py-5">
-                        <div className="flex items-center gap-4">
-                           <div className="p-2 rounded-xl" style={{ backgroundColor: `${cat.color}15`, color: cat.color }}>
-                              <cat.icon size={20} strokeWidth={3} />
-                           </div>
-                           <span className="text-xs font-black text-[#292667] uppercase tracking-[0.2em]">{cat.label}</span>
-                        </div>
-                     </td>
-                  </tr>
-                  {cat.actions.map((action) => (
-                    <tr key={action.id} className="hover:bg-slate-50/50 transition-colors group">
-                      <td className="px-16 py-6">
-                         <div className="flex flex-col">
-                            <span className="text-base font-black text-[#292667] uppercase tracking-tight leading-none mb-1 group-hover:text-[#3b82f6] transition-colors">{action.label}</span>
-                            <span className="text-[10px] font-bold text-slate-300 uppercase tracking-[0.15em]">{cat.id.toUpperCase()} MODULE</span>
-                         </div>
-                      </td>
-                      {roles.map(role => {
-                        // @ts-ignore
-                        const isActive = rolePerms[role][cat.id][action.id];
-                        return (
-                          <td key={role} className="px-8 py-6 text-center">
-                             <button 
-                               onClick={() => togglePerm(role, cat.id, action.id)}
-                               className={`w-16 h-16 rounded-[2rem] flex items-center justify-center mx-auto transition-all shadow-lg ${
-                                 isActive 
-                                   ? 'bg-[#292667] text-[#fbee21] shadow-[#292667]/30 scale-105 rotate-0' 
-                                   : 'bg-white border-4 border-slate-50 text-slate-100 rotate-90 scale-90 hover:border-slate-200 hover:text-slate-200'
-                               }`}
-                             >
-                               {isActive ? <Check size={32} strokeWidth={4} /> : <X size={32} strokeWidth={4} />}
-                             </button>
-                          </td>
-                        );
-                      })}
+              {permissionCategories.map((cat) => {
+                const CategoryIcon = cat.icon;
+                return (
+                  <React.Fragment key={cat.id}>
+                    <tr className="bg-slate-50/50">
+                       <td colSpan={roles.length + 1} className="px-10 py-5">
+                          <div className="flex items-center gap-4">
+                             <div className="p-2 rounded-xl" style={{ backgroundColor: `${cat.color}15`, color: cat.color }}>
+                                <CategoryIcon size={20} strokeWidth={3} />
+                             </div>
+                             <span className="text-xs font-black text-[#292667] uppercase tracking-[0.2em]">{cat.label}</span>
+                          </div>
+                       </td>
                     </tr>
-                  ))}
-                </React.Fragment>
-              ))}
+                    {cat.actions.map((action) => (
+                      <tr key={action.id} className="hover:bg-slate-50/50 transition-colors group">
+                        <td className="px-16 py-6">
+                           <div className="flex flex-col">
+                              <span className="text-base font-black text-[#292667] uppercase tracking-tight leading-none mb-1 group-hover:text-[#3b82f6] transition-colors">{action.label}</span>
+                              <span className="text-[10px] font-bold text-slate-300 uppercase tracking-[0.15em]">{cat.id.toUpperCase()} MODULE</span>
+                           </div>
+                        </td>
+                        {roles.map(role => {
+                          // @ts-ignore
+                          const isActive = rolePerms[role][cat.id][action.id];
+                          return (
+                            <td key={role} className="px-8 py-6 text-center">
+                               <button 
+                                 onClick={() => togglePerm(role, cat.id, action.id)}
+                                 className={`w-16 h-16 rounded-[2rem] flex items-center justify-center mx-auto transition-all shadow-lg ${
+                                   isActive 
+                                     ? 'bg-[#292667] text-[#fbee21] shadow-[#292667]/30 scale-105 rotate-0' 
+                                     : 'bg-white border-4 border-slate-50 text-slate-100 rotate-90 scale-90 hover:border-slate-200 hover:text-slate-200'
+                                 }`}
+                               >
+                                 {isActive ? <Check size={32} strokeWidth={4} /> : <X size={32} strokeWidth={4} />}
+                               </button>
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    ))}
+                  </React.Fragment>
+                );
+              })}
             </tbody>
           </table>
         </div>

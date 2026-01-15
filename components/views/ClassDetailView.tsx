@@ -356,7 +356,7 @@ export const ClassDetailView: React.FC<ClassDetailViewProps> = ({ classId, onStu
                onClick={() => setActiveTab('students')}
                className={`flex-1 flex flex-col items-center justify-center py-6 font-black text-sm uppercase transition-all border-b-8 gap-1 ${activeTab === 'students' ? 'border-[#ec2027] text-[#292667] bg-red-50/20' : 'border-transparent text-slate-400 hover:text-slate-600'}`}
              >
-               < GraduationCap size={28} strokeWidth={3} /> 
+               <GraduationCap size={28} strokeWidth={3} /> 
                <span>Learner Roster</span>
              </button>
              <button 

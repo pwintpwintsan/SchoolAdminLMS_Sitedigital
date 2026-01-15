@@ -54,6 +54,7 @@ export const MOCK_COURSES: Course[] = [
     thumbnail: 'https://picsum.photos/seed/dkv2/400/300',
     description: "Core curriculum for foundational learning in digital skills, logic, and creative thinking.",
     category: "Standard Curriculum",
+    duration: "12 Hours",
     lastUpdated: "2024-03-10",
     modules: [
       {
@@ -107,6 +108,7 @@ export const MOCK_COURSES: Course[] = [
     thumbnail: 'https://picsum.photos/seed/l1c/400/300',
     description: "Introductory robotics and hardware logic for students ready for physical builds.",
     category: "Robotics",
+    duration: "18 Hours",
     lastUpdated: "2024-02-15",
     modules: []
   },

@@ -174,14 +174,17 @@ export const StudentDashboardView: React.FC<StudentDashboardViewProps> = ({ onEn
                <Trophy size={28} className="text-amber-500" strokeWidth={3} /> Badges Room
             </h4>
             <div className="grid grid-cols-2 gap-4 overflow-y-auto scrollbar-hide pr-1">
-               {achievements.map((item) => (
-                 <div key={item.name} className="bg-slate-50 p-6 rounded-[2rem] border-b-6 border-slate-100 flex flex-col items-center text-center group hover:bg-white hover:border-[#fbee21] transition-all shadow-sm">
-                    <div className={`${item.color} p-4 rounded-2xl text-white shadow-2xl mb-4 group-hover:scale-110 group-hover:rotate-6 transition-all`}>
-                       <item.icon size={32} strokeWidth={3} />
-                    </div>
-                    <p className="text-[11px] font-black text-[#292667] uppercase tracking-tight leading-tight">{item.name}</p>
-                 </div>
-               ))}
+               {achievements.map((item) => {
+                 const AchievementIcon = item.icon;
+                 return (
+                   <div key={item.name} className="bg-slate-50 p-6 rounded-[2rem] border-b-6 border-slate-100 flex flex-col items-center text-center group hover:bg-white hover:border-[#fbee21] transition-all shadow-sm">
+                      <div className={`${item.color} p-4 rounded-2xl text-white shadow-2xl mb-4 group-hover:scale-110 group-hover:rotate-6 transition-all`}>
+                         <AchievementIcon size={32} strokeWidth={3} />
+                      </div>
+                      <p className="text-[11px] font-black text-[#292667] uppercase tracking-tight leading-tight">{item.name}</p>
+                   </div>
+                 );
+               })}
                <div className="aspect-square bg-slate-50/50 rounded-[2rem] border-4 border-dashed border-slate-100 flex items-center justify-center text-slate-100 hover:text-amber-200 transition-colors">
                   <Sparkles size={40} />
                </div>

@@ -66,7 +66,7 @@ const AnswerDetailModal = ({ student, onClose }: { student: Student, onClose: ()
               </div>
             </div>
             <div className="text-center md:text-left flex-1 min-w-0">
-              <div className="flex flex-wrap justify-center md:justify-start items-center gap-3 mb-2">
+              <div className="flex wrap justify-center md:justify-start items-center gap-3 mb-2">
                  <span className="px-3 py-1 bg-[#00a651]/10 text-[#00a651] rounded-lg text-[10px] font-black uppercase tracking-widest">Global Rank #4</span>
                  <span className="text-[11px] font-black text-slate-400 uppercase tracking-widest">ID: {student.username}</span>
               </div>
@@ -78,15 +78,18 @@ const AnswerDetailModal = ({ student, onClose }: { student: Student, onClose: ()
                    { id: 'all', label: 'Submission Records', icon: History },
                    { id: 'quizzes', label: 'Quizzes', icon: Video },
                    { id: 'assignments', label: 'Assignments', icon: ClipboardList }
-                 ].map(tab => (
-                   <button 
-                     key={tab.id}
-                     onClick={() => setActiveTab(tab.id as any)}
-                     className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === tab.id ? 'bg-white text-[#292667] shadow-md' : 'text-slate-500 hover:text-[#292667]'}`}
-                   >
-                     <tab.icon size={14} /> {tab.label}
-                   </button>
-                 ))}
+                 ].map(tab => {
+                   const TabIcon = tab.icon;
+                   return (
+                     <button 
+                       key={tab.id}
+                       onClick={() => setActiveTab(tab.id as any)}
+                       className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === tab.id ? 'bg-white text-[#292667] shadow-md' : 'text-slate-500 hover:text-[#292667]'}`}
+                     >
+                       <TabIcon size={14} /> {tab.label}
+                     </button>
+                   );
+                 })}
               </div>
             </div>
           </div>
@@ -393,7 +396,7 @@ export const GradesView: React.FC = () => {
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="font-black text-[#292667] text-2xl uppercase tracking-tight leading-none mb-1.5 truncate">{student.firstName} {student.lastName}</p>
-                      <div className="flex flex-wrap items-center gap-3">
+                      <div className="flex wrap items-center gap-3">
                         <p className="text-[10px] font-black text-[#ec2027] font-mono tracking-widest uppercase shrink-0">#{student.username}</p>
                         <span className="px-2.5 py-0.5 bg-slate-100 rounded-lg text-[9px] font-black text-slate-400 uppercase tracking-widest">{student.level}</span>
                       </div>
